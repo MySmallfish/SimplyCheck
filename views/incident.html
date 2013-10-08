@@ -1,0 +1,53 @@
+﻿<h1>{{ (id ? "EditIncident" : "NewIncident") | l10n }}</h1>
+<div class="controls top">
+    <a class="button large-button" href="#/">{{"Back"|l10n}}</a>
+</div>
+
+<form name="Incident">
+    <div class="main-area">
+        <h3>{{ "Severity" | l10n }}</h3>
+
+        <div class="severities">
+            <div class="severity"
+                 ng-repeat="severity in severities | orderBy:Name"
+                 ng-class="{ 'selected': severity.Id == incident.Severity.Id }"
+                 ng-style="{ 'background-color': severity.Color }">
+                {{ severity.Name }}
+            </div>
+        </div>
+        <div class="handling">
+            <h3>{{ "Handling" | l10n }}</h3>
+            <div>
+                <label for="IncidentDueTime">{{ "DueTime" | l10n }}</label>
+                <input name="IncidentDueTime" type="date" ng-model="incident.DueTime" />
+            </div>
+            <div>
+                <label for="IncidentHandlingTarget">{{ "HandlingTarget" | l10n}}</label>
+                <select name="IncidentHandlingTarget" ng-model="incident.HandlingTarget" ng-options="target.Name for target in targets">
+                    <option value="">{{"SelectHandlingTarget" | l10n }}</option>
+                </select>
+            </div>
+            <div>
+                <h3>{{"IncidentDescription"|l10n}}</h3>
+                <textarea name="IncidentDescription" ng-model="incident.Description"></textarea>
+            </div>
+            <div>
+                <h3>{{"IncidentRemarks"|l10n}}</h3>
+                <textarea name="IncidentRemarks" ng-model="incident.Remarks"></textarea>
+            </div>
+        </div>
+    </div>
+    <div class="side-bar">
+        <h3>{{"Attachments"|l10n}}</h3>
+        <div class="attachments">
+            <div class="attachment" ng-repeat="attachment in incident.Attachments">
+                <img ng-src="{{ attachment.Url + '&s=80x80' }}"/>
+            </div>
+            <div class="attachment add-attachment" ng-hide="incident.Attachments.length >=5">+</div>
+        </div>
+    </div>
+    <div class="controls">
+        <div class="button large-button" ng-click="save()">{{ "Save"|l10n}}</div>
+        <div class="button large-button" ng-click="saveAndNew()">{{ "SaveAndNew"|l10n}}</div>
+    </div>
+</form>

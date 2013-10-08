@@ -1,0 +1,52 @@
+﻿<!doctype html>
+<html lang="he-IL" ng-app="SimplyLog.Checkout">
+<head>
+    <meta charset="utf-8">
+    <title>Simply Check</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" type="text/css" href="app/css/app.css" />
+</head>
+<body class="rtl">
+    <div class="container">
+        <ng-view></ng-view>
+    </div>
+
+    <script src="lib/underscore/underscore.1.5.2.min.js"></script>
+
+    <script src="lib/jquery/jquery-2.0.3.min.js"></script>
+
+    <script src="lib/angular/angular.js"></script>
+    <script src="lib/angular/angular-route.min.js"></script>
+    <script src="lib/angular/angular-touch.min.js"></script>
+
+    <script src="lib/mobileservices/MobileServices.Web-1.0.0.min.js"></script>
+
+    <script src="lib/simple/simple.js"></script>
+    <!-- Services -->
+    <script src="lib/simple/services/language.js"></script>
+    <script src="lib/simple/services/text-resources.js"></script>
+    <!-- Filters -->
+    <script src="lib/simple/filters/localize.js"></script>
+    <script src="lib/simple/filters/gps-location.js"></script>
+    <script src="lib/simple/filters/entity-description.js"></script>
+    <!-- Directives -->
+
+    <script src="lib/simple/simple-module.js"></script>
+    <script src="app/js/simplylog.js"></script>
+    <!-- Services -->
+    <script src="app/js/services/incidentsService.js"></script>
+    <script src="app/js/services/checkoutService.js"></script>
+    <script src="app/js/services/locationsService.js"></script>
+    <!-- Filters -->
+    <!-- Directives -->
+    <!-- Controllers -->
+    <script src="app/js/controllers/home.js"></script>
+    <script src="app/js/controllers/incident.js"></script>
+    <script src="app/js/controllers/checkout.js"></script>
+    <script src="app/js/controllers/new-checkout.js"></script>
+    <script src="app/js/controllers/site-permits.js"></script>
+    <script src="app/js/controllers/configuration.js"></script>
+
+    <script src="app/js/app.js"></script>
+</body>
+</html>

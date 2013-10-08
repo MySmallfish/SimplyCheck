@@ -1,0 +1,30 @@
+﻿<h1>{{ "RequiredPermits" | l10n }}</h1>
+<div class="controls top">
+    <a class="button large-button" href="#/">{{"Back"|l10n}}</a>
+</div>
+<div class="checklist-container">
+    <ul class="checklist">
+        <li ng-repeat="permit in permits" ng-class="{'checked':permit.Id}">
+            <div class="attachments">
+                <div class="attachment" ng-repeat="attachment in permit.Attachments">
+                    <img ng-src="{{ attachment.Url + '&s=64x64' }}" />
+                </div>
+                <div ng-hide="permit.Attachments.length >= 3" class="attachment add-attachment">+</div>
+            </div>
+            <div class="text">
+                {{ permit.Type.Name }}
+            </div>
+            <div class="date">
+                <input type="date" ng-model="permit.EffectiveDate" />
+            </div>
+        </li>
+    </ul>
+</div>
+<div class="controls">
+    <div class="button large-button" ng-click="backToCheckout()">{{"BackToCheckout"|l10n}}</div>
+</div>
+
+<!--            <span>{{"EffectiveDate"|l10n}}</span>
+            <span>{{ permit.EffectiveDate | date:"dd/MM/yyyy" }}</span>
+            <span class="button">{{"Change"|l10n}}</span>
+            <span class="button">{{"Clear"|l10n}}</span>-->
