@@ -1,11 +1,15 @@
-﻿(function(S, SL) {
+﻿(function (S, SL) {
 
-    var simplyLogModule = angular.module("SimplyLog.Checkout", ["ngRoute","Simple"]);
+    var simplyLogModule = angular.module("SimplyLog.Checkout", ["ngRoute", "Simple"]);
 
+    simplyLogModule.value("zumoClient", new WindowsAzure.MobileServiceClient('https://simplycheck.azure-mobile.net/', 'IeFmiqEZkDybLqTiFONABOFvmYLVRG94'));
+
+    simplyLogModule.service("loginManager", SL.LoginManager);
     simplyLogModule.service("incidentsService", SL.IncidentsService);
     simplyLogModule.service("checkoutService", SL.CheckoutService);
     simplyLogModule.service("locationsService", SL.LocationsService);
 
+    simplyLogModule.controller("LoginCtrl", SL.LoginController);
     simplyLogModule.controller("HomeCtrl", SL.HomeController);
     simplyLogModule.controller("CheckoutCtrl", SL.CheckoutController);
     simplyLogModule.controller("ConfigurationCtrl", SL.ConfigurationController);
@@ -16,6 +20,7 @@
     simplyLogModule.config(function ($routeProvider) {
         $routeProvider
             .when("/", { templateUrl: "views/home.html", controller: "HomeCtrl" })
+            .when("/Login", { templateUrl: "views/login.html", controller: "LoginCtrl" })
             .when("/Incident/:checkoutId/:categoryId", { templateUrl: "views/incident.html", controller: "IncidentCtrl" })
             .when("/Incident/:id", { templateUrl: "views/incident.html", controller: "IncidentCtrl" })
             .when("/Checkout/:id", { templateUrl: "views/checkout.html", controller: "CheckoutCtrl" })
@@ -24,10 +29,26 @@
             .when("/Configuration", { templateUrl: "views/configuration.html", controller: "ConfigurationCtrl" })
             .otherwise({ redirectTo: "/" });
     });
-    
+
+    simplyLogModule.run(function ($rootScope, $location, loginManager) {
+
+        // register listener to watch route changes
+        $rootScope.$on("$routeChangeStart", function (event, next, current) {
+            loginManager.isUserLoggedIn().catch(function() {
+                // no logged user, we should be going to #login
+                if (next.templateUrl == "views/login.html") {
+                    // already going to #login, no redirect needed
+                } else {
+                    // not going to #login, we should redirect now
+                    $location.path("/Login");
+                }
+            });
+        });
+    });
+
     simplyLogModule.run(function (textResource) {
         textResource.load("he-IL", {
-            "Edit":"עריכה",
+            "Edit": "עריכה",
             "Incidents": "ליקויים",
             "OrderBy": "מיין לפי",
             "header": "מיקום",
@@ -40,7 +61,7 @@
             "Back": "חזרה",
             "NewIncident": "הוספת ממצא",
             "EditIncident": "עריכת ממצא",
-            "Invalid": "לא תקין",   
+            "Invalid": "לא תקין",
             "Checkouts": "מבדקים",
             "CheckoutDetails": "ביצוע מבדק",
             "TypeToSearch": "הקלד מילות מפתח לחיפוש...",
@@ -57,7 +78,13 @@
             "EffectiveDate": "תאריך:",
             "BackToCheckout": "חזרה למבדק",
             "NewCheckout": "מבדק חדש",
-            "StartCheckout": "התחל מבדק"
+            "StartCheckout": "התחל מבדק",
+            "SystemLogin": "כניסה למערכת",
+            "Login": "כניסה",
+            "Username": "שם משתמש",
+            "Password": "סיסמה",
+            "Logout": "יציאה",
+            "AuthenticationFailed": "שם המשתמש או הסיסמה שגויים או שאינך רשום"
         });
     });
 

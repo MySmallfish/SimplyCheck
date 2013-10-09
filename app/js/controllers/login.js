@@ -1,5 +1,5 @@
-(function(S) {
-    S.LoginController = function($scope, loginManager) {
+(function(S, SL) {
+    SL.LoginController = function($scope, loginManager) {
 
         function navigate() {
             location.href = "#/";
@@ -12,11 +12,11 @@
         $scope.login = function() {
             var authResult = loginManager.authenticate($scope.Username, $scope.Password);
 
-            function loginUser(token) {
-                loginManager.login($scope.Username, token).then(navigate);
+            function loginUser(user) {
+                loginManager.login(user).then(navigate);
             }
 
-            function authenticationFailed() {
+            function authenticationFailed(error) {
                 $scope.loginError = "AuthenticationFailed";
             }
 
@@ -24,4 +24,4 @@
 
         };
     };
-})(Simple);
+})(Simple, SimplyLog);

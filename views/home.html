@@ -1,8 +1,7 @@
 ﻿<h1>{{ "Checkouts" | l10n }}</h1>
 <div class="controls top">
     <a class="button large-button" href="#/NewCheckout">{{"NewCheckout"|l10n}}</a>
-    <a class="button large-button" ng-click="login()" ng-hide="isUserLoggedIn">{{"Login"|l10n}}</a>
-    <a class="button large-button" ng-click="logout()" ng-show="isUserLoggedIn">{{"Logout"|l10n}}</a>
+    <a class="button large-button pullLeft" ng-click="logout()" >{{"Logout"|l10n}}</a>
 </div>
 <div class="filters">
     <div class="sort" ng-click="displaySortOptions=!displaySortOptions">

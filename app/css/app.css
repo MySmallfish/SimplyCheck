@@ -44,6 +44,11 @@ body.rtl
     direction: rtl;
 }
 
+button {
+    -webkit-appearance: none;
+    border: none;
+}
+
 .checkout-item,
 .site{
     display: inline-block;
@@ -475,4 +480,32 @@ ul.checklist li .text {
 .site .hd {
     font-size: 14pt;
     font-weight: bold;
+}
+
+.pullLeft {
+    display: block;
+    float: left;
+}
+
+.login-box {
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+label {
+    display: inline-block;
+    width: 40%;
+    text-align: left;
+}
+
+.message {
+    text-align: center;
+    border: solid 1px #333;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+}
+
+[disabled] {
+    color: #888;
 }
