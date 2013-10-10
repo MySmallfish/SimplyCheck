@@ -1,7 +1,9 @@
 (function(S, SL) {
     SL.LoginManager = function(storageService, $q, zumoClient) {
         
-        function authenticate(userName, password){
+
+        function authenticate(userName, password) {
+
             var result = $q.defer();
             var users = zumoClient.getTable("Users");
 
