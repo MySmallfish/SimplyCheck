@@ -9,8 +9,6 @@
             navigate();
         });
 
-        $scope.loginError = "cam";
-
         $scope.login = function () {
             camera.takePicture().then(function (uri) {
                 $scope.loginError = uri;

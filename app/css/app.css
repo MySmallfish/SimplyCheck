@@ -488,9 +488,10 @@ ul.checklist li .text {
 }
 
 .login-box {
-    max-width: 300px;
-    margin-left: auto;
-    margin-right: auto;
+    
+    margin-left: 164px;
+    margin-right: 164px;
+    font-size: 16pt;
 }
 
 label {
@@ -508,4 +509,15 @@ label {
 
 [disabled] {
     color: #888;
+}
+
+.login-box input,
+.login-box .button{
+    font-size: 16pt;
+}
+
+.login-box .button {
+    font-size: 24pt;
+    width: 120px;
+    height: 48px;
 }
