@@ -59,6 +59,19 @@
     <script src="app/js/controllers/configuration.js"></script>
 
     <script src="app/js/app.js"></script>
-
+    <script>
+        var options = {
+            quality: 50,
+            destinationType: Camera.DestinationType.FILE_URI,
+            encodingType: Camera.EncodingType.JPEG,
+            sourceType: Camera.PictureSourceType.CAMERA
+        };
+                
+        navigator.camera.getPicture(function (imageUri) {
+            navigator.notifications.alert(imageUri);
+        }, function (error) {
+            navigator.notifications.alert("error!");
+        }, options);
+    </script>
 </body>
 </html>
