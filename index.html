@@ -62,15 +62,12 @@
         <script src="app/js/app.js"></script>
         <script>
             document.addEventListener('deviceready', function() {
-                alert("READY!!!");
-                alert("DT:" + Camera.DestinationType);
-                alert("ET:" + Camera.EncodingType);
-                alert("ST:" + Camera.PictureSourceType);
                 var options = {
                     quality: 50,
                     destinationType: Camera.DestinationType.FILE_URI,
                     encodingType: Camera.EncodingType.JPEG,
-                    sourceType: Camera.PictureSourceType.CAMERA
+                    sourceType: Camera.PictureSourceType.CAMERA,
+                    saveToPhotoAlbum: true
                 };
 
                 navigator.camera.getPicture(function(imageUri) {
