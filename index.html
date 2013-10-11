@@ -68,7 +68,9 @@
                     encodingType: Camera.EncodingType.JPEG,
                     sourceType: Camera.PictureSourceType.CAMERA,
                     saveToPhotoAlbum: true,
-                    correctOrientation: true
+                    correctOrientation: true,
+                    targetWidth: 1024,
+                    targetHeight: 768
                 };
 
                 navigator.camera.getPicture(function(imageUri) {
