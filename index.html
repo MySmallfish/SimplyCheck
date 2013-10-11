@@ -67,7 +67,8 @@
                     destinationType: Camera.DestinationType.FILE_URI,
                     encodingType: Camera.EncodingType.JPEG,
                     sourceType: Camera.PictureSourceType.CAMERA,
-                    saveToPhotoAlbum: true
+                    saveToPhotoAlbum: true,
+                    correctOrientation: true
                 };
 
                 navigator.camera.getPicture(function(imageUri) {
