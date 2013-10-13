@@ -18,10 +18,8 @@
         $scope.incident = incidentsService.getIncidentDetails($scope.id);
         $scope.incident.Attachments = [];
         
-        function acceptAttachment(uri) {
-            alert(uri);
-            uri = uri.toURL();
-            alert(uri);
+        function acceptAttachment(file) {
+            var uri = uri.toURL();
             var incidentDetails = {
                 Id: 1,
                 collapsed: true,
@@ -46,6 +44,8 @@
             };
             $scope.incident = incidentDetails;
             $scope.$apply();
+
+            return file;
         }
 
         function notifyAttachmentError(error) {
