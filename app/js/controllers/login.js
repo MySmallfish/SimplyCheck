@@ -1,5 +1,5 @@
 (function(S, SL) {
-    SL.LoginController = function($scope, loginManager,camera, fileManager, fileUtils) {
+    SL.LoginController = function($q, $scope, loginManager,camera, fileManager, fileUtils) {
 
         function navigate() {
             location.href = "#/";
@@ -12,7 +12,6 @@
         $scope.login = function () {
             
             var authResult = loginManager.authenticate($scope.Username, $scope.Password);
-
             function loginUser(user) {
                 loginManager.login(user).then(navigate);
             }

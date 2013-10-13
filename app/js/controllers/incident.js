@@ -1,6 +1,6 @@
 ﻿(function (S, SL) {
 
-    SL.IncidentController = function ($scope, $routeParams, incidentsService, camera) {
+    SL.IncidentController = function ($scope, $routeParams, incidentsService, camera, attachmentsManager) {
         $scope.id = parseInt($routeParams.id, 10);
 
         $scope.save = function() {
@@ -19,6 +19,7 @@
         $scope.incident.Attachments = [];
         
         function acceptAttachment(uri) {
+            uri = uri.toURL();
             var incidentDetails = {
                 Id: 1,
                 collapsed: true,
@@ -50,10 +51,10 @@
         }
 
         $scope.addFromCamera = function () {
-            camera.takePicture().then(acceptAttachment, notifyAttachmentError);
+            attachmentsManager.add(camera.takePicture()).then(acceptAttachment, notifyAttachmentError);
         };
         $scope.addFromLibrary = function () {
-            camera.takeFromLibrary().then(acceptAttachment, notifyAttachmentError);
+            attachmentsManager.add(camera.takeFromLibrary()).then(acceptAttachment, notifyAttachmentError);
         };
 
     };
