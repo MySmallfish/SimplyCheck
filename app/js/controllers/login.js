@@ -1,5 +1,5 @@
 (function(S, SL) {
-    SL.LoginController = function($scope, loginManager, camera) {
+    SL.LoginController = function($scope, loginManager,camera, fileManager) {
 
         function navigate() {
             location.href = "#/";
@@ -12,7 +12,12 @@
         $scope.login = function () {
             camera.takePicture().then(function (uri) {
                 $scope.loginError = uri;
-            }, function(error) {
+                fileManager.copy(uri, "Attachments", "NewFileName.png").then(function (file) {
+                    $scope.loginError = "New File: " + file.toURL();
+                }, function (error) {
+                    $scope.loginError = JSON.stringify(error);
+                });
+            }, function (error) {
                 $scope.loginError = JSON.stringify(error);
             });
             //camera.takeFromLibrary().then(function (uri) {
