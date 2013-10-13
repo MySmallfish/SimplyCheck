@@ -43,7 +43,10 @@
             <div class="attachment" ng-repeat="attachment in incident.Attachments">
                 <img ng-src="{{ attachment.Url + '&s=80x80' }}"/>
             </div>
-            <div class="attachment add-attachment" ng-hide="incident.Attachments.length >=5">+</div>
+            <div class="attachment add-attachment" ng-hide="incident.Attachments.length >=5">
+                <div class="inner-button" ng-click="addFromCamera()"><i class="icon-camera"></i></div>
+                <div class="inner-button" ng-click="addFromLibrary()"><i class="icon-folder-open"></i></div>
+            </div>
         </div>
     </div>
     <div class="controls">

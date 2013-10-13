@@ -432,12 +432,12 @@ ul.checklist {
 
 ul.checklist li.checked
 {
-    list-style-image: url(../img/checkbox_checked_small.png);
+    list-style-image: url(../img/checkbox_checked.png);
 }
 
 ul.checklist li
 {
-    list-style-image: url(../img/checkbox_unchecked_small.png);
+    list-style-image: url(../img/checkbox_unchecked.png);
 }
 
 ul.checklist li {
@@ -489,8 +489,8 @@ ul.checklist li .text {
 
 .login-box {
     
-    margin-left: 164px;
-    margin-right: 164px;
+    margin-left: auto;
+    margin-right: auto;
     font-size: 16pt;
 }
 
@@ -520,4 +520,16 @@ label {
     font-size: 24pt;
     width: 120px;
     height: 48px;
+}
+
+.inner-button {
+    font-size: 50%;
+    line-height: normal;
+    cursor: pointer;
+}
+
+.inner-button:first-child {
+    border-bottom: solid 1px #333;
+    margin-left: 4px;
+    margin-right: 4px;
 }

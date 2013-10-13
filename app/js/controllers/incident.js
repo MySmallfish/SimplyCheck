@@ -1,8 +1,7 @@
 ﻿(function (S, SL) {
 
-    SL.IncidentController = function ($scope, $routeParams, incidentsService) {
+    SL.IncidentController = function ($scope, $routeParams, incidentsService, camera) {
         $scope.id = parseInt($routeParams.id, 10);
-
 
         $scope.save = function() {
             location.href = "#/Checkout/1";
@@ -17,6 +16,22 @@
         $scope.targets = incidentsService.getHandlingTargets();
 
         $scope.incident = incidentsService.getIncidentDetails($scope.id);
+
+        function acceptAttachment(uri) {
+            $scope.incident.Attachments.push(uri);
+        }
+
+        function notifyAttachmentError(error) {
+
+        }
+
+        $scope.addFromCamera = function () {
+            camera.takePicture().then(acceptAttachment, notifyAttachmentError);
+        };
+        $scope.addFromLibrary = function () {
+            camera.takeFromLibrary().then(acceptAttachment, notifyAttachmentError);
+        };
+
     };
 
 })(Simple, SimplyLog);
