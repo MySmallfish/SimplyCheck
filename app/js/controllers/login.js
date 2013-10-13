@@ -1,8 +1,7 @@
 (function(S, SL) {
     SL.LoginController = function($q, $scope, loginManager,camera, fileManager, fileUtils) {
         $scope.Username = "mysmallfish@gmail.com";
-        #
-        scope.Password = "1234";
+        $scope.Password = "1234";
         function navigate() {
             location.href = "#/";
         }
