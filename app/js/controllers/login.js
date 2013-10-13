@@ -10,19 +10,6 @@
         });
 
         $scope.login = function () {
-            if (camera.isAvailable()) {
-                camera.takeFromLibrary().then(function(uri) {
-                    $scope.loginError = uri;
-
-                    fileManager.move(uri, "Attachments", fileUtils.uniqueFileName(uri)).then(function(file) {
-                        $scope.loginError = "New File: " + file.toURL();
-                    }, function(error) {
-                        $scope.loginError = JSON.stringify(error);
-                    });
-                }, function(error) {
-                    $scope.loginError = JSON.stringify(error);
-                });
-            }
             
             var authResult = loginManager.authenticate($scope.Username, $scope.Password);
 
