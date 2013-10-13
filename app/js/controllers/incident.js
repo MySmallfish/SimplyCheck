@@ -19,7 +19,9 @@
         $scope.incident.Attachments = [];
         
         function acceptAttachment(uri) {
+            alert(uri);
             uri = uri.toURL();
+            alert(uri);
             var incidentDetails = {
                 Id: 1,
                 collapsed: true,
