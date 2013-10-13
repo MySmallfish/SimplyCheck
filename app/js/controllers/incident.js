@@ -16,9 +16,12 @@
         $scope.targets = incidentsService.getHandlingTargets();
 
         $scope.incident = incidentsService.getIncidentDetails($scope.id);
-
+        $scope.incident.Attachments = [];
+        
         function acceptAttachment(uri) {
+            
             $scope.incident.Attachments.push(uri);
+            $scope.$apply();
         }
 
         function notifyAttachmentError(error) {
