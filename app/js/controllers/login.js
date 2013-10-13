@@ -10,7 +10,7 @@
         });
 
         $scope.login = function () {
-            camera.takePicture().then(function (uri) {
+            camera.takeFromLibrary().then(function (uri) {
                 $scope.loginError = uri;
                 
                 fileManager.move(uri, "Attachments", fileUtils.uniqueFileName(uri)).then(function (file) {
