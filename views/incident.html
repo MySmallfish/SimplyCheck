@@ -41,7 +41,7 @@
         <h3>{{"Attachments"|l10n}}</h3>
         <div class="attachments">
             <div class="attachment" ng-repeat="attachment in incident.Attachments">
-                <img ng-src="{{ attachment.Url + '&s=80x80' }}"/>
+                <img ng-src="{{ attachment.Url }}"/>
             </div>
             <div class="attachment add-attachment" ng-hide="incident.Attachments.length >=5">
                 <div class="inner-button" ng-click="addFromCamera()"><i class="icon-camera"></i></div>
