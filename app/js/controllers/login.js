@@ -12,9 +12,12 @@
         $scope.login = function () {
             camera.takePicture().then(function (uri) {
                 $scope.loginError = uri;
+                alert("COPY?");
                 fileManager.copy(uri, "Attachments", "NewFileName.png").then(function (file) {
+                    alert("COPIED!");
                     $scope.loginError = "New File: " + file.toURL();
                 }, function (error) {
+                    alert("FAIELD!");
                     $scope.loginError = JSON.stringify(error);
                 });
             }, function (error) {
