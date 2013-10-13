@@ -14,10 +14,8 @@
                 $scope.loginError = uri;
                 
                 fileManager.copy(uri, "Attachments", "NewFileName.png").then(function (file) {
-                    alert("COPIED!");
                     $scope.loginError = "New File: " + file.toURL();
                 }, function (error) {
-                    alert("FAIELD!");
                     $scope.loginError = JSON.stringify(error);
                 });
             }, function (error) {
