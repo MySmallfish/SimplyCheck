@@ -9,7 +9,9 @@
     <input type="password" name="password" ng-model="Password" placeholder="{{ 'Password' | l10n }}" required="required" maxlength="20"/>
         
         <p class="message" ng-show="loginError">{{ loginError | l10n }}</p>
-        
+        <div>
+            Network Status:<span>{{ networkStatus }}</span>
+        </div>
     <div class="controls">
         <button class="button large-button" type="submit" ng-disabled="Login.$invalid">{{ "Login"|l10n}}</button>
     </div>

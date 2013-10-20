@@ -31,7 +31,6 @@
     });
 
     simplyLogModule.run(function ($rootScope, $location, loginManager) {
-
         // register listener to watch route changes
         $rootScope.$on("$routeChangeStart", function (event, next, current) {
             loginManager.isUserLoggedIn().catch(function() {

@@ -1,5 +1,5 @@
 (function(S, SL) {
-    SL.LoginController = function($q, $scope, loginManager, queueManager) {
+    SL.LoginController = function ($q, $scope, loginManager, queueManager, network) {
         $scope.Username = "mysmallfish@gmail.com";
         $scope.Password = "1234";
         function navigate() {
@@ -10,8 +10,17 @@
             navigate();
         });
 
-        $scope.login = function () {
+        $scope.networkStatus = "Unknown";
+        function updateNetworkStatus() {
+            $scope.networkStatus = network.isOnline() ? "Online" : "Offline";
+        }
+        $scope.$on("Simple.NetworkStatusChanged", function (args) {
+            updateNetworkStatus();
+        });
 
+        updateNetworkStatus();
+        $scope.login = function () {
+            
             var q = queueManager.get({
                 name: "test",
                 processItemAction: function(item) {
