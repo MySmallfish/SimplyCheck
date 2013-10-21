@@ -37,8 +37,7 @@
             ]
         };
         function acceptAttachment(uri) {
-            console.log("ACCEPTING: ", uri);
-
+            
             incidentDetails.Attachments.push({ Index: incidentDetails.Attachments.length, Url: uri });
  
             $scope.incident = incidentDetails;
