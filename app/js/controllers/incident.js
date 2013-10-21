@@ -53,10 +53,14 @@
         }
 
         $scope.addFromCamera = function () {
-            attachmentsManager.add(camera.takePicture()).then(acceptAttachment, notifyAttachmentError);
+            if (camera.isAvailable()) {
+                attachmentsManager.add(camera.takePicture()).then(acceptAttachment, notifyAttachmentError);
+            }
         };
         $scope.addFromLibrary = function () {
-            attachmentsManager.add(camera.takeFromLibrary()).then(acceptAttachment, notifyAttachmentError);
+            if (camera.isAvailable()) {
+                attachmentsManager.add(camera.takeFromLibrary()).then(acceptAttachment, notifyAttachmentError);
+            }
         };
 
     };
