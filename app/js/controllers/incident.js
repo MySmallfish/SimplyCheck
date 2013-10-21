@@ -18,8 +18,9 @@
         $scope.incident = incidentsService.getIncidentDetails($scope.id);
         $scope.incident.Attachments = [];
         
-        function acceptAttachment(file) {
-            var uri = uri.toURL();
+        function acceptAttachment(uri) {
+            console.log("ACCEPTING: ", uri);
+            
             var incidentDetails = {
                 Id: 1,
                 collapsed: true,
@@ -53,7 +54,7 @@
         }
 
         $scope.addFromCamera = function () {
-            if (camera.isAvailable()) {
+            if (camera.isAvailable()) { 
                 attachmentsManager.add(camera.takePicture()).then(acceptAttachment, notifyAttachmentError);
             }
         };
