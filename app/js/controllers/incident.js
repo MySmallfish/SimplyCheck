@@ -17,32 +17,30 @@
 
         $scope.incident = incidentsService.getIncidentDetails($scope.id);
         $scope.incident.Attachments = [];
-        
+ 
+        var incidentDetails = {
+            Id: 1,
+            collapsed: true,
+            Severity: {
+                Id: 1,
+                Name: "2",
+                Color: "#FF0000"
+            },
+            DueDate: new Date(),
+            Description: "תקלה",
+            Remarks: "פעולה",
+            HandlingTarget: {
+                Id: 1,
+                Name: "מחלקת התברואה"
+            },
+            Attachments: [
+            ]
+        };
         function acceptAttachment(uri) {
             console.log("ACCEPTING: ", uri);
-            
-            var incidentDetails = {
-                Id: 1,
-                collapsed: true,
-                Severity: {
-                    Id: 1,
-                    Name: "2",
-                    Color: "#FF0000"
-                },
-                DueDate: new Date(),
-                Description: "תקלה",
-                Remarks: "פעולה",
-                HandlingTarget: {
-                    Id: 1,
-                    Name: "מחלקת התברואה"
-                },
-                Attachments: [
-                    { Index: 1, Url: uri },
-                    { Index: 2, Url: "https://bt.ylm.co.il/Download.ashx?p=Attachments/Event/386/image[72ec29c9-ff32-4762-96d8-4180d1806663].jpg" },
-                    { Index: 3, Url: "https://bt.ylm.co.il/Download.ashx?p=Attachments/Event/386/image[72ec29c9-ff32-4762-96d8-4180d1806663].jpg" },
-                    { Index: 4, Url: "https://bt.ylm.co.il/Download.ashx?p=Attachments/Event/386/image[72ec29c9-ff32-4762-96d8-4180d1806663].jpg" }
-                ]
-            };
+
+            incidentDetails.Attachments.push({ Index: incidentDetails.Attachments.length, Url: uri });
+ 
             $scope.incident = incidentDetails;
             $scope.$apply();
 
