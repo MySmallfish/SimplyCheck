@@ -1,5 +1,6 @@
 (function(S, SL) {
-    SL.LoginController = function ($q, $scope, loginManager, queueManager, network, networkManager) {
+    SL.LoginController = function ($q, $scope, loginManager, queueManager, network, networkManager, $log) {
+        
         $scope.Username = "mysmallfish@gmail.com";
         $scope.Password = "1234";
         function navigate() {
