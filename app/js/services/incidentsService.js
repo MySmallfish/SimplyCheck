@@ -1,100 +1,91 @@
 ﻿(function (S, SL) {
 
-    SL.IncidentsService = function ($q) {
+    SL.IncidentsService = function ($q, utils, entityManager) {
+        function getEventsQuery() {
+            return breeze.EntityQuery.from("Event");
+        }
 
+        function mapSeverity(severity) {
+            console.log("CCC", severity.Color, utils.color.fromRGBValue(severity.Color));
+            return {
+                Id: severity.Id,
+                Name: severity.Name,
+                Color: (["red", "orange", "#FDEE00"])[severity.Id - 1]
+            };
+        }
+
+        function mapHandlingTarget(handlingTarget) {
+            return {
+                Id: handlingTarget.Id,
+                Name: handlingTarget.Name
+                
+            };
+        }
+
+        function getActiveItemsQuery(entity, fields, orderBy) {
+            var query = breeze.EntityQuery.from(entity)                              
+                              .where("RowStatus", "==", 0)
+                              
+            if (fields) {
+                query = query.select(fields);
+            }
+
+            if (orderBy) {
+                query = query.orderBy(orderBy);
+            }
+
+            return query;
+        }
+        function getSeverityQuery() {
+            var query = getActiveItemsQuery("Severity", ["Id", "Name", "Color"], "Id").where("Id", "<", 4);
+            return query;
+        }
+        function getHandlingTargetQuery() {
+            var query = getActiveItemsQuery("HandlingTarget", ["Id", "Name"], "Name");
+            return query;
+        }
+
+        function getItems(query, mapFunction) {
+            return $q.when(entityManager.executeQuery(query)).then(function (result) {
+                return _.map(result.results, mapFunction);
+            });
+        }
+                
         function getCheckoutIncidents(checkoutId) {
-            var incidents = [
-                {
-                    Id: 1,
-                    collapsed: true,
-                    Severity: {
-                        Id: 1,
-                        Name: "2"
-                    },
-                    DueDate: new Date(),
-                    Description: "תקלה",
-                    Remarks: "פעולה",
-                    HandlingTarget: {
-                        Id: 1,
-                        Name: "מחלקת התברואה"
-                    },
-                    Attachments: [
-                        "https://bt.ylm.co.il/Download.ashx?p=Attachments/Event/387/image[7cb75f74-9100-4f47-8660-dc5106ad26cd].jpg",
-                        "https://bt.ylm.co.il/Download.ashx?p=Attachments/Event/386/image[f493e335-ec11-4bce-85a0-4546adf023bf].jpg&s=86x64"
-                    ]
-                },
-                {
-                    Id: 2,
-                    collapsed: true,
-                    Severity: {
-                        Id: 2,
-                        Name: "2"
-                    },
-                    DueDate: new Date(),
-                    Description: "תקלה",
-                    Remarks: "פעולה",
-                    HandlingTarget: {
-                        Id: 1,
-                        Name: "מחלקת התברואה"
-                    },
-                    Attachments: [
-                        "https://bt.ylm.co.il/Download.ashx?p=Attachments/Event/387/image[7cb75f74-9100-4f47-8660-dc5106ad26cd].jpg",
-                        "https://bt.ylm.co.il/Download.ashx?p=Attachments/Event/386/image[f493e335-ec11-4bce-85a0-4546adf023bf].jpg&s=86x64"
-                    ]
-                },
-            ];
-            
-            var defer = $q.defer();
-            defer.resolve(incidents);
-            return defer.promise;
+            var parentId = breeze.Predicate.create("ParentEventId", "==", checkoutId),
+                rowStatus = breeze.Predicate.create("RowStatus", "==", 0);
+
+            var query = getEventsQuery().where(parentId.and(rowStatus))
+                                        .orderByDesc("StartTime");
+            return $q.when(entityManager.executeQuery(query)).then(function (queryResults) {
+                var incidents = queryResults.results;
+                return _.map(incidents, function (incident) {
+                    var result = {
+                        Id: incident.Id,
+                        Severity: {
+                            Id: incident.Severity,
+                            Name: incident.Name
+                        },
+                        Description: incident.Description,
+                        DueDate: incident.DueDate,
+                        Remarks: incident.Remarks,
+                        Category: {
+                            Id: incident.CategoryId,
+                            Name: incident.CategoryFullName
+                        }
+                    };
+                    return result;
+                });
+            });
         }
 
         function getHandlingTargets() {
-            var items =
-            [
-                {
-                    Id: 1,
-                    Name: "Dept 1"
-                },
-                {
-                    Id: 2,
-                    Name: "Dept 2"
-                },
-                {
-                    Id: 3,
-                    Name: "Dept 3"
-                },
-                {
-                    Id: 4,
-                    Name: "Dept 4"
-                }
-            ];
-            
-            var defer = $q.defer();
-            defer.resolve(items);
-            return defer.promise;
+            return getItems(getHandlingTargetQuery(), mapHandlingTarget);
         }
 
+       
         function getSeverities() {
-            var items = [
-                {
-                    Id: 1,
-                    Name: "1",
-                    Color: "red"
-                },
-                {
-                    Id: 2,
-                    Name: "2",
-                    Color: "orange"
-                },
-                {
-                    Id: 3,
-                    Name: "3",
-                    Color: "#FDEE00"
-                }];
-            var defer = $q.defer();
-            defer.resolve(items);
-            return defer.promise;
+            return getItems(getSeverityQuery(), mapSeverity);
         }
 
         function getIncidentDetails(id) {

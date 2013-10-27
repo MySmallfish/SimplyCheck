@@ -33,7 +33,7 @@
     simplyLogModule.run(function ($rootScope, $location, loginManager) {
         // register listener to watch route changes
         $rootScope.$on("$routeChangeStart", function (event, next, current) {
-            loginManager.isUserLoggedIn().catch(function() {
+            loginManager.isUserLoggedIn().catch(function () {
                 // no logged user, we should be going to #login
                 if (next.templateUrl == "views/login.html") {
                     // already going to #login, no redirect needed
@@ -87,5 +87,27 @@
         });
     });
 
+
+    simplyLogModule.factory("entityManager", function () {
+
+        var serverAddress = "http://localhost:49712/odata/";
+        var defaultHandler = OData.defaultHandler;
+        
+        breeze.config.initializeAdapterInstances({
+            dataService: "OData"
+        });
+        var dataService = new breeze.DataService({
+            serviceName: serverAddress
+        })
+        var manager = new breeze.EntityManager(serverAddress);
+        //manager.metadataStore.fetchMetadata(dataService, function (data) {
+        //    console.log("MD", data);
+
+        //    console.log("Types", manager.metadataStore.getEntityTypes());
+        //});
+
+
+        return manager;
+    });
 
 })(Simple, SimplyLog);

@@ -306,6 +306,12 @@ a.button:hover {
     border-bottom: solid 1px #DDd;
 }
 
+.collapsed .children{
+    display:none;
+}
+.checkout li{
+    cursor:pointer;
+}
 .collapsed .incidents-header {
     
     color: #444;

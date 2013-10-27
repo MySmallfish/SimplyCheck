@@ -1,155 +1,135 @@
 ﻿(function (S, SL) {
 
-    SL.CheckoutService = function ($q, incidentsService) {
+    SL.CheckoutService = function ($q, incidentsService, entityManager) {
+        function getCheckoutQuery() {
+            var query = breeze.EntityQuery.from("Checkout").select([
+                           "Id", "Description",
+                           "LocationFullName", "LocationEntityId", "LocationEntityType", "LocationPath", "LocationLevel1",
+                           "ChildEvents", "OpenChildrenCount",
+                           "FreeText1", "FreeText2",
+                           "StartTime", "CloseTime", "DueTime",
+                           "Status",
+                           "CategoryId"
+            ]);
+            return query;
+        }
+
+        function mapCheckout(item) {
+            return {
+                id: parseInt(item.Id,10),
+                header: item.LocationLevel1,
+                status: item.Status == 1 ? (item.ChildEvents > 0)?1: 0 : 2,
+                count: item.ChildEvents,
+                open: item.OpenChildrenCount,
+                date: item.StartTime
+            };
+        }
+
+        function mapCategory(category) {
+            return {
+                Id: category.Id,
+                ParentId: category.ParentId,
+                Name: category.Name,
+                Text: category.Remarks,
+                Collapsed: false,
+                toggleCollapsed: function () {
+                    this.Collapsed = !this.Collapsed;
+                    if (this.Collapsed) {
+                        if (this.Items) {
+                            _.each(this.Items, function (item) {
+                                item.Collapsed = true;
+                            })
+                        }
+                    } else {
+                        if (this.Items && this.Items[0]) {
+                            this.Items[0].Collapsed = false;
+                        }
+                    }
+                }
+            };
+        }
+
+        function createMap(items) {
+            var map = {};
+            _.each(items, function (item) {
+                map[item.Id] = item;
+            });
+            return map;
+        }
+
+        function assignIncidents(map, incidents) {
+            _.each(incidents, function (incident) {
+                var category = map[incident.Category.Id];
+                if (category) {
+                    category.Incidents = category.Incidents || [];
+                    category.Incidents.push(incident);
+                }
+            });
+        }
+
+        function prepareCheckoutViewModel(items, checkout, incidents) {
+            var map = createMap(items);
+
+            assignIncidents(map, incidents);
+
+            var checkoutViewModel = {
+                Items: buildHierarchy(map, checkout.CategoryId),
+                Site: {
+                    Id: checkout.LocationEntityId,
+                    Name: checkout.LocationFullName
+                }
+            };
+
+            return checkoutViewModel;
+        }
+
+        function buildHierarchy(map, rootId) {
+            var root = [];
+            _.each(map, function (item) {
+                if (item.ParentId != rootId) {
+                    var parent = map[item.ParentId];
+                    parent.Items = parent.Items || [];
+                    parent.Items.push(item);
+                } else {
+                    root.push(item);
+                }
+            });
+            return root;
+        }
 
         function getCheckouts(employeeId) {
-            var items = [
-                {
-                    id: 1,
-                    header: 'אורט חט"ב',
-                    status: 0,
-                    count: 5,
-                    open: 2,
-                    date: new Date(2013, 6, 6)
-                },
-                {
-                    id: 2,
-                    header: 'אור לציון',
-                    status: 2,
-                    count: 10,
-                    open: 3,
-                    date: new Date(2013, 6, 6)
-                },
-                {
-                    id: 3,
-                    header: 'גן האורן',
-                    status: 1,
-                    count: 34,
-                    open: 20,
-                    date: new Date(2013, 5, 23)
-                },
-                {
-                    id: 4,
-                    header: 'הגלבוע',
-                    status: 1,
-                    count: 12,
-                    date: new Date(2013, 2, 10)
-                },
-                {
-                    id: 5,
-                    header: 'הצורן',
-                    status: 2,
-                    count: 7,
-                    date: new Date(2013, 8, 12)
-                },
-                {
-                    id: 6,
-                    header: 'שתי גדות לירדן זו שלנו שו גם כן',
-                    status: 0,
-                    count: 23,
-                    date: new Date(2012, 10, 6)
-                },
-                {
-                    id: 7,
-                    header: 'אורט חט"ב',
-                    status: 0,
-                    count: 3,
-                    date: new Date(2012, 11, 31)
-                },
-                {
-                    id: 8,
-                    header: 'גולדה',
-                    status: 2,
-                    count: 6,
-                    date: new Date(2010, 2, 26)
-                },
-                {
-                    id: 9,
-                    header: 'בית ספר פח',
-                    status: 1,
-                    count: 60,
-                    date: new Date(2010, 2, 10)
-                },
-            ];
+            var query = getCheckoutQuery();
+           
+            return $q.when(entityManager.executeQuery(query)).then(function (data) {
+                return _.map(data.results, mapCheckout);
+            }, function (err) {
+                console.error(err);
+            });
 
-            var defer = $q.defer();
-            defer.resolve(items);
-            return defer.promise;
+
         }
 
         function getCheckout(id) {
-            var items = [
-                {
-                    Id: 3,
-                    Name: "פרק 2 :הסביבה החיצונית",
-                    Items: [
-                        {
-                            Name: "מיקום המוסד",
-                            Items: [
-                                {
-                                    Id: 3,
-                                    collapsed: true,
-                                    Valid: true,
-                                    Name: "2.1",
-                                    Text: "לא יהיו בקרבת המוסד מקורות המהווים מפגעי בטיחות, גהות או סיכונים פוטנציאלים (רעש, צחנה, זיהום אוויר, מכלים חשופים של גז, דלק, עגורנים. .. ואחרים)"
-                                },
-                                {
-                                    Id: 3,
-                                    collapsed: true,
-                                    Valid: false,
-                                    Name: "2.2",
-                                    Text: "לא יעברו קווי מתח גבוה בקרבת המוסד, במידה וקיים קו במרחק הקטן מ-50 מטר יש לבדקו ע״י בודק מוסמך (קרינה וכיו״ב) בכל מקרה מרחק קו מתח גבוה מחצר המוסד לא יפחת מ-5 מטר."
-                                },
-                                { Name: "2.2", Text: "לא יעברו קווי מתח גבוה בקרבת המוסד, במידה וקיים קו במרחק הקטן מ-50 מטר יש לבדקו ע״י בודק מוסמך (קרינה וכיו״ב) בכל מקרה מרחק קו מתח גבוה מחצר המוסד לא יפחת מ-5 מטר." },
-                                { Id: 3, collapsed: true, Valid: true, Name: "2.2", Text: "לא יעברו קווי מתח גבוה בקרבת המוסד, במידה וקיים קו במרחק הקטן מ-50 מטר יש לבדקו ע״י בודק מוסמך (קרינה וכיו״ב) בכל מקרה מרחק קו מתח גבוה מחצר המוסד לא יפחת מ-5 מטר." },
-                                { Id: 3, collapsed: true, Valid: true, Name: "2.2", Text: "לא יעברו קווי מתח גבוה בקרבת המוסד, במידה וקיים קו במרחק הקטן מ-50 מטר יש לבדקו ע״י בודק מוסמך (קרינה וכיו״ב) בכל מקרה מרחק קו מתח גבוה מחצר המוסד לא יפחת מ-5 מטר." },
-                                { Id: 3, collapsed: true, Valid: false, Name: "2.2", Text: "לא יעברו קווי מתח גבוה בקרבת המוסד, במידה וקיים קו במרחק הקטן מ-50 מטר יש לבדקו ע״י בודק מוסמך (קרינה וכיו״ב) בכל מקרה מרחק קו מתח גבוה מחצר המוסד לא יפחת מ-5 מטר." }]
-                        }]
-                },
-                {
-                    Name: "פרק 2 :הסביבה החיצונית",
-                    Items: [
-                        {
-                            Name: "מיקום המוסד",
-                            Items: [
-                                { Id: 3, collapsed: true, Valid: true, Name: "2.1", Text: "לא יהיו בקרבת המוסד מקורות המהווים מפגעי בטיחות, גהות או סיכונים פוטנציאלים (רעש, צחנה, זיהום אוויר, מכלים חשופים של גז, דלק, עגורנים. .. ואחרים)" },
-                                { Id: 3, collapsed: true, Valid: false, Name: "2.2", Text: "לא יעברו קווי מתח גבוה בקרבת המוסד, במידה וקיים קו במרחק הקטן מ-50 מטר יש לבדקו ע״י בודק מוסמך (קרינה וכיו״ב) בכל מקרה מרחק קו מתח גבוה מחצר המוסד לא יפחת מ-5 מטר." },
-                                { Name: "2.2", Text: "לא יעברו קווי מתח גבוה בקרבת המוסד, במידה וקיים קו במרחק הקטן מ-50 מטר יש לבדקו ע״י בודק מוסמך (קרינה וכיו״ב) בכל מקרה מרחק קו מתח גבוה מחצר המוסד לא יפחת מ-5 מטר." },
-                                { Id: 3, collapsed: true, Valid: true, Name: "2.2", Text: "לא יעברו קווי מתח גבוה בקרבת המוסד, במידה וקיים קו במרחק הקטן מ-50 מטר יש לבדקו ע״י בודק מוסמך (קרינה וכיו״ב) בכל מקרה מרחק קו מתח גבוה מחצר המוסד לא יפחת מ-5 מטר." },
-                                { Id: 3, collapsed: true, Valid: true, Name: "2.2", Text: "לא יעברו קווי מתח גבוה בקרבת המוסד, במידה וקיים קו במרחק הקטן מ-50 מטר יש לבדקו ע״י בודק מוסמך (קרינה וכיו״ב) בכל מקרה מרחק קו מתח גבוה מחצר המוסד לא יפחת מ-5 מטר." },
-                                { Id: 3, collapsed: true, Valid: false, Name: "2.2", Text: "לא יעברו קווי מתח גבוה בקרבת המוסד, במידה וקיים קו במרחק הקטן מ-50 מטר יש לבדקו ע״י בודק מוסמך (קרינה וכיו״ב) בכל מקרה מרחק קו מתח גבוה מחצר המוסד לא יפחת מ-5 מטר." }]
-                        }]
-                },
-                {
-                    Name: "פרק 2 :הסביבה החיצונית",
-                    Items: [
-                        {
-                            Name: "מיקום המוסד",
-                            Items: [
-                                { Id: 3, collapsed: true, Valid: true, Name: "2.1", Text: "לא יהיו בקרבת המוסד מקורות המהווים מפגעי בטיחות, גהות או סיכונים פוטנציאלים (רעש, צחנה, זיהום אוויר, מכלים חשופים של גז, דלק, עגורנים. .. ואחרים)" },
-                                { Id: 3, collapsed: true, Valid: false, Name: "2.2", Text: "לא יעברו קווי מתח גבוה בקרבת המוסד, במידה וקיים קו במרחק הקטן מ-50 מטר יש לבדקו ע״י בודק מוסמך (קרינה וכיו״ב) בכל מקרה מרחק קו מתח גבוה מחצר המוסד לא יפחת מ-5 מטר." },
-                                { Name: "2.2", Text: "לא יעברו קווי מתח גבוה בקרבת המוסד, במידה וקיים קו במרחק הקטן מ-50 מטר יש לבדקו ע״י בודק מוסמך (קרינה וכיו״ב) בכל מקרה מרחק קו מתח גבוה מחצר המוסד לא יפחת מ-5 מטר." },
-                                { Id: 3, collapsed: true, Valid: true, Name: "2.2", Text: "לא יעברו קווי מתח גבוה בקרבת המוסד, במידה וקיים קו במרחק הקטן מ-50 מטר יש לבדקו ע״י בודק מוסמך (קרינה וכיו״ב) בכל מקרה מרחק קו מתח גבוה מחצר המוסד לא יפחת מ-5 מטר." },
-                                { Id: 3, collapsed: true, Valid: true, Name: "2.2", Text: "לא יעברו קווי מתח גבוה בקרבת המוסד, במידה וקיים קו במרחק הקטן מ-50 מטר יש לבדקו ע״י בודק מוסמך (קרינה וכיו״ב) בכל מקרה מרחק קו מתח גבוה מחצר המוסד לא יפחת מ-5 מטר." },
-                                { Id: 3, collapsed: true, Valid: false, Name: "2.2", Text: "לא יעברו קווי מתח גבוה בקרבת המוסד, במידה וקיים קו במרחק הקטן מ-50 מטר יש לבדקו ע״י בודק מוסמך (קרינה וכיו״ב) בכל מקרה מרחק קו מתח גבוה מחצר המוסד לא יפחת מ-5 מטר." }]
-                        }]
-                },
-            ];
+            id = parseInt(id, 10);
             
-            var defer = $q.defer();
-
-            incidentsService.getCheckoutIncidents(id).then(function (incidnets) {
-                // match incidents...
-                defer.resolve({
-                    Items: items,
-                    Site: {
-                        Id: 4,
-                        Name: "אור לציון"
-                    }
-                });
+            return $q.all([ $q.when(entityManager.fetchEntityByKey("Checkout", id, true)).then(function (checkout) {
+                checkout = checkout.entity;
+                if (checkout) {
+                    var categoriesQuery = breeze.EntityQuery.from("Category").where("RootId", "equals", parseInt(checkout.CategoryId, 10));
+                    return $q.when(entityManager.executeQuery(categoriesQuery)).then(function (categories) {
+                        return {
+                            checkout: checkout, categories: _.map(categories.results, mapCategory)
+                        };
+                    });
+                } else {
+                    return $q.when({});
+                }
+            }), incidentsService.getCheckoutIncidents(id)]).then(function (results) {
+                var checkout = results[0].checkout, items = results[0].categories, incidents = results[1];
+                
+                var result = prepareCheckoutViewModel(items, checkout, incidents);
+                return result;
             });
-            
-            return defer.promise;
 
         }
 

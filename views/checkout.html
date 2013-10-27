@@ -10,24 +10,28 @@
 </div>
 <div class="checkout">
 <ul>
-    <li ng-repeat="item in checkout.Items">
-        <h3>{{item.Name}}</h3>
+    <li ng-repeat="item in checkout.Items"
+        ng-class="{ 'collapsed': item.Collapsed}">
+        <h3 ng-click="item.toggleCollapsed()">{{item.Name}}</h3>
         <div class="children">
             <ul>
-                <li ng-repeat="childItem in item.Items" >
-                    <h4>{{childItem.Name}}</h4>
+                <li ng-repeat="childItem in item.Items"
+                    ng-class="{ 'collapsed': childItem.Collapsed}">
+                    <h4 ng-click="childItem.toggleCollapsed()">{{childItem.Name}}</h4>
                     <div class="children">
                         <ul>
-                            <li ng-repeat="child in childItem.Items | filter:search" class="clearfix" ng-class="{ 'checkout-category':true, 'valid': child.Valid == true, 'invalid': child.Valid == false }">
-                                
-                                <div class="bullet">
+                            <li ng-repeat="child in childItem.Items | filter:search"
+                                class="clearfix"
+                                ng-class="{ 'checkout-category':true, 'valid': child.Valid == true, 'invalid': child.Valid == false, 'collapsed':child.Collapsed }">
+
+                                <div class="bullet" ng-click="child.toggleCollapsed()">
                                     {{child.Name}}
                                 </div>
                                 <div class="text">{{child.Text}}</div>
                                 <div class="button large-button valid" ng-click="markAsValid(child);">{{"Valid"|l10n}}</div>
                                 <div class="button large-button invalid" ng-click="markAsInValid(child);">{{"Invalid"|l10n}}</div>
-                                <div ng-show="child.Incidents.length" class="incidents" ng-class="{ 'collapsed': child.collapsed }">
-                                    <div class="incidents-header" ng-click="child.collapsed = !child.collapsed">
+                                <div ng-show="child.Incidents.length" class="incidents" ng-class="{ 'collapsed': child.IncidentsCollapsed}">
+                                    <div class="incidents-header" ng-click="child.IncidentsCollapsed = !child.IncidentsCollapsed">
                                         {{ child.Incidents.length }} {{ "Incidents"|l10n }}
                                     </div>
                                     <div class="incidents-items">
