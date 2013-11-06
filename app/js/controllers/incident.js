@@ -1,6 +1,6 @@
 ﻿(function (S, SL) {
 
-    SL.IncidentController = function ($scope, $routeParams, incidentsService, camera, attachmentsManager) {
+    SL.IncidentController = function ($q, $scope, $routeParams, incidentsService, camera, attachmentsManager) {
         if ($routeParams.id) {
             $scope.id = parseInt($routeParams.id, 10);
         } else {
@@ -8,13 +8,30 @@
             $scope.checkoutId = parseInt($routeParams.checkoutId, 10);
         }
 
+        function saveIncident() {
+            // valid?
+            var result = $q.defer();
+            console.log($scope.incident);
+            result.resolve();
+
+            return result.promise;
+        }
         $scope.save = function () {
-            location.href = "#/Checkout/1";
+            if ($scope.incident) {
+                saveIncident().then(function () {
+                    location.href = "#/Checkout/1";
+                });
+            }            
         };
 
         $scope.saveAndNew = function () {
-            location.href = "#/Incident/1/1";
+            if ($scope.incident) {
+                saveIncident().then(function () {
+                    location.href = "#/Incident/1/1";
+                });
+            }            
         };
+
         var severities;
         $scope.severities = incidentsService.getSeverities().then(function (items) {
             severities = items;
