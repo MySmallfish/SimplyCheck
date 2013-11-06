@@ -1,6 +1,6 @@
 ﻿(function (S, SL) {
 
-    var simplyLogModule = angular.module("SimplyLog.Checkout", ["ngRoute", "Simple"]);
+    var simplyLogModule = angular.module("SimplyLog.Checkout", ["ngRoute", "$strap","Simple"]);
 
     simplyLogModule.value("zumoClient", new WindowsAzure.MobileServiceClient('https://simplycheck.azure-mobile.net/', 'IeFmiqEZkDybLqTiFONABOFvmYLVRG94'));
 
@@ -16,7 +16,12 @@
     simplyLogModule.controller("SitePermitsCtrl", SL.SitePermitsController);
     simplyLogModule.controller("NewCheckoutCtrl", SL.NewCheckoutController);
     simplyLogModule.controller("IncidentCtrl", SL.IncidentController);
-
+    simplyLogModule.value('$strapConfig', {
+        datepicker: {
+            language: 'he',
+            format: 'dd/MM/yyyy'
+        }
+    });
     simplyLogModule.config(function ($routeProvider) {
         $routeProvider
             .when("/", { templateUrl: "views/home.html", controller: "HomeCtrl" })

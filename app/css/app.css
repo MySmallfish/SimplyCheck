@@ -21,12 +21,15 @@ html[xmlns] .clearfix {
 }
 body, textarea
 {
-    border: none;
     margin: 0;
     padding: 0;
     font-family: "Segoe UI","Tahoma","Verdana","Arial","sans-serif";
     font-weight: normal;
+}
+body {
+    border: none;
     -webkit-font-smoothing: antialiased;
+
 }
 
 .container
@@ -101,6 +104,7 @@ button {
 
 .checkout-item .progress
 {
+    display:none;
     height: 1em;
 }
 
@@ -253,7 +257,10 @@ a.button:hover {
 .large-button {
         height: 32px;
     line-height: 32px;
-
+font-size: 14pt;
+padding:8px;
+    padding-right:12px;
+    padding-left:12px;
 }
 .checkout .button.valid {
     background-color: green;
@@ -335,6 +342,7 @@ a.button:hover {
     text-align: center;
     display: inline-block;
     color: white;
+    cursor:pointer;
 }
 .selected {
     
@@ -345,7 +353,8 @@ a.button:hover {
     margin: 4px;
 }
 
-textarea {
+textarea,
+textarea:focus {
     width: 100%;
     min-height: 10em;
     resize: none;
@@ -371,7 +380,7 @@ textarea {
     height: 80px;
 }
 .main-area {
-    margin-right: 220px;
+    margin-right: 320px;
 }
 .side-bar {
     position: absolute;
@@ -381,13 +390,13 @@ textarea {
     overflow: auto;
     -webkit-font-smoothing: antialiased;
     
-    width: 220px;
+    width: 320px;
 }
 
 
 .rtl .main-area {
     margin-right: 0;
-    margin-left: 220px;
+    margin-left: 320px;
 }
 .rtl .side-bar {
 
@@ -503,7 +512,7 @@ ul.checklist li .text {
 label {
     display: inline-block;
     width: 40%;
-    text-align: left;
+    
 }
 
 .message {

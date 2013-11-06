@@ -6,7 +6,6 @@
         }
 
         function mapSeverity(severity) {
-            console.log("CCC", severity.Color, utils.color.fromRGBValue(severity.Color));
             return {
                 Id: severity.Id,
                 Name: severity.Name,
@@ -88,6 +87,17 @@
             return getItems(getSeverityQuery(), mapSeverity);
         }
 
+        function getNewIncidentDetails(checkoutId, categoryId) {
+            var incidentDetails = {
+                Id: 0,
+                UniqueId: utils.guid.create()
+            };
+
+            var defer = $q.defer();
+            defer.resolve(incidentDetails);
+            return defer.promise;
+        }
+
         function getIncidentDetails(id) {
             var incidentDetails = {
                 Id: 1,
@@ -121,7 +131,8 @@
             getCheckoutIncidents: getCheckoutIncidents,
             getHandlingTargets: getHandlingTargets,
             getSeverities: getSeverities,
-            getIncidentDetails: getIncidentDetails
+            getIncidentDetails: getIncidentDetails,
+            getNewIncidentDetails: getNewIncidentDetails
         };
     };
     
