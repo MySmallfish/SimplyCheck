@@ -1,6 +1,6 @@
 ﻿(function (S, SL) {
 
-    SL.IncidentsService = function ($q, utils, entityManager) {
+    SL.IncidentsService = function ($q, utils, entityManager, queueManager) {
         function getEventsQuery() {
             return breeze.EntityQuery.from("Event");
         }
@@ -127,12 +127,44 @@
             return defer.promise;
         }
 
+        function sendIncident(incident) {
+            var result = $q.defer();
+            result.resolve(incident);
+            //result.reject("NA");
+            return result.promise;
+        }
+
+        var incidentsQueue = queueManager.get({
+            name: "Incidents",
+            processItemAction: sendIncident
+        });
+
+        function validate(incident) {
+            var result = $q.defer();
+            console.log("VALID", incident);
+            result.resolve(incident);
+
+            return result.promise;
+        }
+
+        function runSaveQueue(incident) {
+            incidentsQueue.run();
+            return incident;
+        }
+        function save(incident) {
+            return validate(incident)
+                            .then(incidentsQueue.push)
+                            .then(runSaveQueue);
+        }
+
         return {
             getCheckoutIncidents: getCheckoutIncidents,
             getHandlingTargets: getHandlingTargets,
             getSeverities: getSeverities,
             getIncidentDetails: getIncidentDetails,
-            getNewIncidentDetails: getNewIncidentDetails
+            getNewIncidentDetails: getNewIncidentDetails,
+            save: save,
+            validate:validate
         };
     };
     

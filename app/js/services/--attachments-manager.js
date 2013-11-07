@@ -1,5 +1,45 @@
 ﻿(function(S, SL) {
     SL.AttachmentsManager = function($q,remoteStorage, zumoClient) {
+
+        //var q = queueManager.get({
+        //    name: "test",
+        //    processItemAction: function(item) {
+        //        console.log("processing...", item);
+        //        return $q.when(item).then(function(i) {
+        //            console.log("ITEM: ", i);
+        //        });
+        //    }
+        //});
+        ////q.run();
+        //q.push(1);
+        //q.push(2);
+        //q.push(3);
+        //q.push(4);
+        //networkManager.runOnline(function () {
+        //    console.log("RIN");
+        //    return q.run();
+        //});
+
+        //network.simulateOffline();
+
+        //q.push(5);
+        //q.push(6);
+        //networkManager.runOnline(function () {
+        //    console.log("RUN");
+        //    return q.run();
+        //});
+
+        //q.push(7);
+        //q.push(8);
+        //networkManager.runOnline(function () {
+        //    console.log("RUN 2");
+        //    return q.run();
+        //});
+
+        //network.simulateOnline();
+        //network.clearSimulation();
+        //return;
+
         //var attachments = zumoClient.getTable("Attachments");
         //attachments.insert({
         //    entityName: "Event",

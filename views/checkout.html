@@ -1,7 +1,4 @@
-﻿<h1>{{ "Checkout" | l10n }}</h1>
-
-<div class="controls top">
-    <a class="button large-button" href="#/">{{"Back"|l10n}}</a>
+﻿<div class="controls top">
     <a class="button large-button" ng-href="#/SitePermits/{{checkout.Site.Id}}">{{"RequiredPermits"|l10n}}</a>
 </div>
 <div class="filters">
@@ -39,7 +36,7 @@
                                             <li ng-repeat="incident in child.Incidents">
                                                 <span>{{ incident.Severity.Name }}</span>
                                                 {{ incident.Description }}
-                                                <div class="button edit-checkout-item" ng-click="navigateToIncident(incident.Id);">{{"Edit"|l10n}}</div>
+                                                <div class="button edit-checkout-item" ng-click="navigateToIncident(child, incident.Id);">{{"Edit"|l10n}}</div>
                                             </li>
                                         </ul>
                                     </div>

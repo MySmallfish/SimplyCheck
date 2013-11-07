@@ -1,17 +1,22 @@
 ﻿(function (S, SL) {
 
-    SL.IncidentController = function ($q, $scope, $routeParams, incidentsService, camera, attachmentsManager) {
+    SL.IncidentController = function ($q, $scope, $routeParams, incidentsService, camera, attachmentsManager, textResource, navigate) {
+        $scope.categoryId = parseInt($routeParams.categoryId, 10);
+        $scope.checkoutId = parseInt($routeParams.checkoutId, 10);
+
         if ($routeParams.id) {
             $scope.id = parseInt($routeParams.id, 10);
+            $scope.changeHeader(textResource.get("NewIncident"));
         } else {
-            $scope.categoryId = parseInt($routeParams.categoryId, 10);
-            $scope.checkoutId = parseInt($routeParams.checkoutId, 10);
+            $scope.changeHeader(textResource.get("EditIncident"));
         }
 
         function saveIncident() {
-            // valid?
+            console.log("INCIDENt", $scope.incident);
+            return incidentsService.save($scope.incident);
+            
             var result = $q.defer();
-            console.log($scope.incident);
+
             result.resolve();
 
             return result.promise;
@@ -19,22 +24,30 @@
         $scope.save = function () {
             if ($scope.incident) {
                 saveIncident().then(function () {
-                    location.href = "#/Checkout/1";
+                    navigate.back();
                 });
-            }            
+            }
         };
 
         $scope.saveAndNew = function () {
             if ($scope.incident) {
                 saveIncident().then(function () {
-                    location.href = "#/Incident/1/1";
+                    navigate.newIncident($scope.checkoutId, $scope.categoryId);
                 });
-            }            
+            }
         };
+
+        function setDefaultSeverity() {
+            if ($scope.incident && !$scope.incident.Severity && severities) {
+                $scope.incident.Severity = severities[severities.length - 1];
+            }
+        }
+
 
         var severities;
         $scope.severities = incidentsService.getSeverities().then(function (items) {
             severities = items;
+            setDefaultSeverity();
             return items;
         });
 
@@ -46,7 +59,7 @@
                 $scope.incident.Severity = severity;
             }
         };
-        
+
         $scope.targets = incidentsService.getHandlingTargets();
         var incidentDetails;
         if ($scope.id) {
@@ -57,6 +70,7 @@
 
         incidentDetails.then(function (details) {
             $scope.incident = details;
+            setDefaultSeverity();
         });
 
         function acceptAttachment(uri) {

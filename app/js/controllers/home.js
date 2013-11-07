@@ -1,6 +1,7 @@
 ﻿(function (S, SL) {
     
-    SL.HomeController = function($scope, checkoutService, loginManager,$location) {
+    SL.HomeController = function ($scope, checkoutService, loginManager, $location, textResource) {
+        $scope.changeHeader(textResource.get("Checkouts"));
         $scope.orderBy = "header";
         $scope.items = checkoutService.getCheckouts();
         

@@ -1,9 +1,4 @@
-﻿<h1>{{ (id ? "EditIncident" : "NewIncident") | l10n }}</h1>
-<div class="controls top">
-    <a class="button large-button" href="#/">{{"Back"|l10n}}</a>
-</div>
-
-<form name="Incident">
+﻿<form name="Incident" novalidate>
     <div class="main-area">
         
         <div class="row-fluid">
@@ -41,7 +36,7 @@
         </div>
         <div>
             <h3>{{"IncidentDescription"|l10n}}</h3>
-            <textarea name="IncidentDescription" ng-model="incident.Description"></textarea>
+            <textarea name="IncidentDescription" ng-model="incident.Description" required></textarea>
         </div>
         <div>
             <h3>{{"IncidentRemarks"|l10n}}</h3>
@@ -55,13 +50,13 @@
                 <img ng-src="{{ attachment.Url }}" />
             </div>
             <div class="attachment add-attachment" ng-hide="incident.Attachments.length >=5">
-                <div class="inner-button" ng-click="addFromCamera()"><i class="icon-camera"></i></div>
-                <div class="inner-button" ng-click="addFromLibrary()"><i class="icon-folder-open"></i></div>
+                <div class="inner-button" ng-click="addFromCamera()"><i class="fa fa-camera"></i></div>
+                <div class="inner-button" ng-click="addFromLibrary()"><i class="fa fa-folder-open"></i></div>
             </div>
         </div>
     </div>
     <div class="controls">
-        <div class="button large-button" ng-click="save()">{{ "Save"|l10n}}</div>
-        <div class="button large-button" ng-click="saveAndNew()">{{ "SaveAndNew"|l10n}}</div>
+        <button class="button large-button" ng-disabled="Incident.$invalid" ng-click="save()">{{ "Save"|l10n}}</button>
+        <button class="button large-button" ng-disabled="Incident.$invalid" ng-click="saveAndNew()">{{ "SaveAndNew"|l10n}}</button>
     </div>
 </form>

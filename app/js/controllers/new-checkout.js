@@ -1,6 +1,7 @@
 ﻿(function (S, SL) {
 
-    SL.NewCheckoutController = function ($scope, locationsService) {
+    SL.NewCheckoutController = function ($scope, locationsService, textResource) {
+        $scope.changeHeader(textResource.get("NewCheckout"));
         $scope.selectedSite = null;
         $scope.selectSite = function (site) {
             if ($scope.selectedSite == site) {

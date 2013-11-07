@@ -1,19 +1,19 @@
-﻿<h1>SimplyCheck</h1>
-<div class="login-box">
+﻿<div class="login-box">
     <h2>{{"SystemLogin"|l10n}}</h2>
     <form name="Login" ng-submit="login()">
-    
-    <label for="userName">{{ "Username" | l10n }}</label>
-    <input type="text" name="userName" ng-model="Username"  placeholder="{{ 'Username' | l10n }}" required="required" maxlength="200"/>
-    <label for="password">{{ "Password" | l10n }}</label>
-    <input type="password" name="password" ng-model="Password" placeholder="{{ 'Password' | l10n }}" required="required" maxlength="20"/>
-        
-        <p class="message" ng-show="loginError">{{ loginError | l10n }}</p>
-        <div>
-            Network Status:<span>{{ networkStatus }}</span>
-        </div>
-    <div class="controls">
-        <button class="button large-button" type="submit" ng-disabled="Login.$invalid">{{ "Login"|l10n}}</button>
+        <fieldset ng-disabled="inProgress">
+            <label for="userName">{{ "Username" | l10n }}</label>
+            <input type="text" name="userName" ng-model="Username" placeholder="{{ 'Username' | l10n }}" required="required" maxlength="200" />
+            <label for="password">{{ "Password" | l10n }}</label>
+            <input type="password" name="password" ng-model="Password" placeholder="{{ 'Password' | l10n }}" required="required" maxlength="20" />
+
+            <p class="message" ng-show="loginError">{{ loginError | l10n }}</p>
+            <div class="controls">
+                <button class="button large-button" type="submit" ng-disabled="Login.$invalid">{{ "Login"|l10n}}</button>
+            </div>
+        </fieldset>
+    </form>
+    <div class="networkStatus">
+        Network Status:<span>{{ networkStatus }}</span>
     </div>
-</form>
 </div>

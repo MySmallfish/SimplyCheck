@@ -13,8 +13,13 @@
     
 </head>
     <body class="rtl">
-        <div class="container">
+        
+        <app-header></app-header>
+        <div class="container-fluid">
+            
             <ng-view></ng-view>
+
+            
         </div>
 
         <script src="lib/underscore/underscore.1.5.2.min.js"></script>
@@ -57,18 +62,21 @@
         <script src="lib/simple/filters/gps-location.js"></script>
         <script src="lib/simple/filters/entity-description.js"></script>
         <!-- Directives -->
-
+        <script src="lib/simple/directives/simple-nav.js"></script>
+        
         <script src="lib/simple/simple-module.js"></script>
     
 
         <script src="app/js/simplylog.js"></script>
         <!-- Services -->
+        <script src="app/js/services/navigation.js"></script>
         <script src="app/js/services/login-manager.js"></script>
         <script src="app/js/services/incidentsService.js"></script>
         <script src="app/js/services/checkoutService.js"></script>
         <script src="app/js/services/locationsService.js"></script>
         <!-- Filters -->
         <!-- Directives -->
+        <script src="app/js/directives/app-header/app-header.js"></script>
         <!-- Controllers -->
         <script src="app/js/controllers/login.js"></script>
         <script src="app/js/controllers/home.js"></script>

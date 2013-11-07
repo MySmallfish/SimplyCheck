@@ -1,6 +1,6 @@
 ﻿(function (S, SL) {
 
-    var simplyLogModule = angular.module("SimplyLog.Checkout", ["ngRoute", "$strap","Simple"]);
+    var simplyLogModule = angular.module("SimplyLog.Checkout", ["ngRoute", "$strap", "Simple"]);
 
     simplyLogModule.value("zumoClient", new WindowsAzure.MobileServiceClient('https://simplycheck.azure-mobile.net/', 'IeFmiqEZkDybLqTiFONABOFvmYLVRG94'));
 
@@ -8,6 +8,12 @@
     simplyLogModule.service("incidentsService", SL.IncidentsService);
     simplyLogModule.service("checkoutService", SL.CheckoutService);
     simplyLogModule.service("locationsService", SL.LocationsService);
+
+    simplyLogModule.provider("navigate", SL.NavigationServiceProvider);
+
+    simplyLogModule.directive("appHeader", function () {
+        return SL.AppHeaderDirective;
+    });
 
     simplyLogModule.controller("LoginCtrl", SL.LoginController);
     simplyLogModule.controller("HomeCtrl", SL.HomeController);
@@ -22,25 +28,43 @@
             format: 'dd/MM/yyyy'
         }
     });
-    simplyLogModule.config(function ($routeProvider) {
-        $routeProvider
-            .when("/", { templateUrl: "views/home.html", controller: "HomeCtrl" })
-            .when("/Login", { templateUrl: "views/login.html", controller: "LoginCtrl" })
-            .when("/Incident/:checkoutId/:categoryId", { templateUrl: "views/incident.html", controller: "IncidentCtrl" })
-            .when("/Incident/:id", { templateUrl: "views/incident.html", controller: "IncidentCtrl" })
-            .when("/Checkout/:id", { templateUrl: "views/checkout.html", controller: "CheckoutCtrl" })
-            .when("/NewCheckout", { templateUrl: "views/new-checkout.html", controller: "NewCheckoutCtrl" })
-            .when("/SitePermits/:id", { templateUrl: "views/site-permits.html", controller: "SitePermitsCtrl" })
-            .when("/Configuration", { templateUrl: "views/configuration.html", controller: "ConfigurationCtrl" })
-            .otherwise({ redirectTo: "/" });
+    simplyLogModule.config(function (navigateProvider) {
+        navigateProvider.configure();
     });
 
     simplyLogModule.run(function ($rootScope, $location, loginManager) {
         // register listener to watch route changes
+        $rootScope.changeHeader = function (header) {
+            $rootScope.header = header;
+        };
+
+        $rootScope.$on("progress-started", function () {
+            $rootScope.isInProgress = true;
+        });
+        $rootScope.$on("progress-completed", function () {
+            $rootScope.isInProgress = false;
+        });
+
+        $rootScope.logout = function () {
+            loginManager.logout().then(function () {
+                $location.path("Login");
+            });
+        };
+        var anonymousAllowed = ["views/login.html"];
+        $rootScope.$on("$routeChangeSuccess", function (event, next, current) {
+            $rootScope.changeHeader("");
+            if (next && next.locals) {
+                $rootScope.pageInfo = next.locals.pageInfo;
+            }
+        });
         $rootScope.$on("$routeChangeStart", function (event, next, current) {
-            loginManager.isUserLoggedIn().catch(function () {
+            loginManager.isUserLoggedIn().then(function () {
+                $rootScope.isLoggedIn = true;
+
+            }, function () {
+                $rootScope.isLoggedIn = false;
                 // no logged user, we should be going to #login
-                if (next.templateUrl == "views/login.html") {
+                if (anonymousAllowed.indexOf(next.templateUrl) >= 0) {
                     // already going to #login, no redirect needed
                 } else {
                     // not going to #login, we should redirect now
@@ -48,6 +72,7 @@
                 }
             });
         });
+
     });
 
     simplyLogModule.run(function (textResource) {
@@ -97,7 +122,7 @@
 
         var serverAddress = "http://localhost:49712/odata/";
         var defaultHandler = OData.defaultHandler;
-        
+
         breeze.config.initializeAdapterInstances({
             dataService: "OData"
         });
