@@ -596,3 +596,7 @@ header .title{
 .rtl .header-buttons > div{
     float:left;
 }
+input[type=url]{
+    text-align:left;
+    direction:ltr;
+}

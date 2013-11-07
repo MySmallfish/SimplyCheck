@@ -2,7 +2,7 @@
 
     var simplyLogModule = angular.module("SimplyLog.Checkout", ["ngRoute", "$strap", "Simple"]);
 
-    simplyLogModule.value("zumoClient", new WindowsAzure.MobileServiceClient('https://simplycheck.azure-mobile.net/', 'IeFmiqEZkDybLqTiFONABOFvmYLVRG94'));
+    
 
     simplyLogModule.service("loginManager", SL.LoginManager);
     simplyLogModule.service("incidentsService", SL.IncidentsService);
@@ -32,7 +32,17 @@
         navigateProvider.configure();
     });
 
-    simplyLogModule.run(function ($rootScope, $location, loginManager) {
+    simplyLogModule.config(function (configurationManagerProvider) {
+        configurationManagerProvider.configure({
+            "Api.Address": "http://localhost:49712/odata/",
+            "Zumo.Address": "https://simplycheck.azure-mobile.net/"            
+        });
+    });
+
+    simplyLogModule.service("zumoClient", function (configurationManager) {
+        return new WindowsAzure.MobileServiceClient(configurationManager.get("Zumo.Address"), 'IeFmiqEZkDybLqTiFONABOFvmYLVRG94');
+    });
+    simplyLogModule.run(function ($rootScope, $location, loginManager, navigate) {
         // register listener to watch route changes
         $rootScope.changeHeader = function (header) {
             $rootScope.header = header;
@@ -44,13 +54,17 @@
         $rootScope.$on("progress-completed", function () {
             $rootScope.isInProgress = false;
         });
+        
+        $rootScope.navigatToConfiguration = function () {
+            navigate.configuration();
+        };
 
         $rootScope.logout = function () {
             loginManager.logout().then(function () {
                 $location.path("Login");
             });
         };
-        var anonymousAllowed = ["views/login.html"];
+        var anonymousAllowed = ["views/login.html","views/configuration.html"];
         $rootScope.$on("$routeChangeSuccess", function (event, next, current) {
             $rootScope.changeHeader("");
             if (next && next.locals) {
@@ -73,6 +87,10 @@
             });
         });
 
+    });
+
+    simplyLogModule.run(function (configurationManager) {
+        configurationManager.load();
     });
 
     simplyLogModule.run(function (textResource) {
@@ -113,14 +131,18 @@
             "Username": "שם משתמש",
             "Password": "סיסמה",
             "Logout": "יציאה",
+            "Configuration": "הגדרות",
+            "ApiAddress": "כתובת API",
+            "MobileServicesAddress":"כתובת Mobile Services",
+            "Save":"שמור",
             "AuthenticationFailed": "שם המשתמש או הסיסמה שגויים או שאינך רשום"
         });
     });
 
 
-    simplyLogModule.factory("entityManager", function () {
+    simplyLogModule.factory("entityManager", function (configurationManager) {
 
-        var serverAddress = "http://localhost:49712/odata/";
+        var serverAddress = configurationManager.get("Api.Address");
         var defaultHandler = OData.defaultHandler;
 
         breeze.config.initializeAdapterInstances({

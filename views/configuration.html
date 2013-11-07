@@ -1,4 +1,16 @@
-﻿<h1>Configuration</h1>
-<div class="controls top">
-    <a class="button large-button" href="#/">{{"Back"|l10n}}</a>
-</div>
+﻿<br/>
+<form name="Configuration" ng-submit="save()">
+    <fieldset ng-disabled="inProgress">
+        <div>
+            <label for="apiAddress">{{ "ApiAddress" | l10n }}</label>
+            <input type="url" name="apiAddress" ng-model="configuration.ApiAddress" required="required" maxlength="300" />
+        </div>
+        <div>
+            <label for="apiAddress">{{ "MobileServicesAddress" | l10n }}</label>
+            <input type="url" name="apiAddress" ng-model="configuration.MobileServicesAddress" required="required" maxlength="300" />
+        </div>
+        <div class="controls">
+            <button class="button large-button" type="submit" ng-disabled="Configuration.$invalid">{{ "Save"|l10n}}</button>
+        </div>
+    </fieldset>
+</form>

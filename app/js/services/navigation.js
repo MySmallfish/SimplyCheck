@@ -3,14 +3,14 @@
 
         function configure() {
             $routeProvider
-                .when("/", { templateUrl: "views/home.html", controller: "HomeCtrl", resolve: { pageInfo: function () { return { back: false, logout: true, home: false }; } } })
-                .when("/Login", { templateUrl: "views/login.html", controller: "LoginCtrl", resolve: { pageInfo: function () { return { back: false, logout: false, home: false }; } } })
+                .when("/", { templateUrl: "views/home.html", controller: "HomeCtrl", resolve: { pageInfo: function () { return { configuration: true, back: false, logout: true, home: false }; } } })
+                .when("/Login", { templateUrl: "views/login.html", controller: "LoginCtrl", resolve: { pageInfo: function () { return { configuration: true, back: false, logout: false, home: false }; } } })
                 .when("/Incident/:checkoutId/:categoryId", { templateUrl: "views/incident.html", controller: "IncidentCtrl" })
                 .when("/Incident/:checkoutId/:categoryId/:id", { templateUrl: "views/incident.html", controller: "IncidentCtrl" })
                 .when("/Checkout/:id", { templateUrl: "views/checkout.html", controller: "CheckoutCtrl" })
                 .when("/NewCheckout", { templateUrl: "views/new-checkout.html", controller: "NewCheckoutCtrl" })
                 .when("/SitePermits/:id", { templateUrl: "views/site-permits.html", controller: "SitePermitsCtrl" })
-                .when("/Configuration", { templateUrl: "views/configuration.html", controller: "ConfigurationCtrl" })
+                .when("/Configuration", { templateUrl: "views/configuration.html", controller: "ConfigurationCtrl", resolve: { pageInfo: function () { return { configuration:false,  back: true, logout: false, home: false }; } } })
                 .otherwise({ redirectTo: "/" });
         }
 
@@ -22,6 +22,9 @@
 
     SL.NavigationService = function ($location, $window) {
 
+        function configuration() {
+            $location.path("/Configuration");
+        }
         function back() {
             $window.history.back();
         }
@@ -40,7 +43,8 @@
         return {
             newIncident: newIncident,
             incident: incident,
-            back: back
+            back: back,
+            configuration: configuration
         }
 
     };
