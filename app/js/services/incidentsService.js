@@ -45,7 +45,7 @@
         }
 
         function getItems(query, mapFunction) {
-            return $q.when(entityManager.executeQuery(query)).then(function (result) {
+            return $q.when(entityManager.get().executeQuery(query)).then(function (result) {
                 return _.map(result.results, mapFunction);
             });
         }
@@ -56,7 +56,7 @@
 
             var query = getEventsQuery().where(parentId.and(rowStatus))
                                         .orderByDesc("StartTime");
-            return $q.when(entityManager.executeQuery(query)).then(function (queryResults) {
+            return $q.when(entityManager.get().executeQuery(query)).then(function (queryResults) {
                 var incidents = queryResults.results;
                 return _.map(incidents, function (incident) {
                     var result = {

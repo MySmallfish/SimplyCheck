@@ -100,7 +100,7 @@
         function getCheckouts(employeeId) {
             var query = getCheckoutQuery();
            
-            return $q.when(entityManager.executeQuery(query)).then(function (data) {
+            return $q.when(entityManager.get().executeQuery(query)).then(function (data) {
                 return _.map(data.results, mapCheckout);
             }, function (err) {
                 console.error(err);
@@ -112,11 +112,11 @@
         function getCheckout(id) {
             id = parseInt(id, 10);
             
-            return $q.all([ $q.when(entityManager.fetchEntityByKey("Checkout", id, true)).then(function (checkout) {
+            return $q.all([ $q.when(entityManager.get().fetchEntityByKey("Checkout", id, true)).then(function (checkout) {
                 checkout = checkout.entity;
                 if (checkout) {
                     var categoriesQuery = breeze.EntityQuery.from("Category").where("RootId", "equals", parseInt(checkout.CategoryId, 10));
-                    return $q.when(entityManager.executeQuery(categoriesQuery)).then(function (categories) {
+                    return $q.when(entityManager.get().executeQuery(categoriesQuery)).then(function (categories) {
                         return {
                             checkout: checkout, categories: _.map(categories.results, mapCategory)
                         };

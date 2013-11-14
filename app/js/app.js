@@ -153,17 +153,21 @@
 
 
     simplyLogModule.factory("entityManager", function (configurationManager) {
+        return {
+            get: function () {
+                var serverAddress = configurationManager.get("Api.Address");
+                var defaultHandler = OData.defaultHandler;
 
-        var serverAddress = configurationManager.get("Api.Address");
-        var defaultHandler = OData.defaultHandler;
-
-        breeze.config.initializeAdapterInstances({
-            dataService: "OData"
-        });
-        var dataService = new breeze.DataService({
-            serviceName: serverAddress
-        })
-        var manager = new breeze.EntityManager(serverAddress);
+                breeze.config.initializeAdapterInstances({
+                    dataService: "OData"
+                });
+                var dataService = new breeze.DataService({
+                    serviceName: serverAddress
+                })
+                var manager = new breeze.EntityManager(serverAddress);
+                return manager;
+            }
+        };
         //manager.metadataStore.fetchMetadata(dataService, function (data) {
         //    console.log("MD", data);
 
