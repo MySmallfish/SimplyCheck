@@ -55,7 +55,7 @@ button {
     display: inline-block;
     background-color: #E5E5E5;
     width: 8em;
-    margin: 1em;
+    margin: 0.5em;
     padding: 0.5em;
     cursor: pointer;
 }
@@ -135,7 +135,7 @@ h1 {
 input.search {
     font-size: 14pt;
     border: solid 1px #BBB;
-    width: 16em;
+    width: 15em;
     text-indent: .2em;
     outline: none;
 }
@@ -440,15 +440,13 @@ ul.checklist {
 }
 
 .rtl ul.checklist {
-    list-style-image:none;
-    list-style-type:none;
+    list-style-image: none;
+    list-style-type: none;
 }
 
 
 ul.checklist li.checked {
-    
     background: url(../img/checkbox_checked.png) no-repeat left top;
-    
 }
 
 
@@ -457,11 +455,12 @@ ul.checklist li {
     padding-left: 56px;
 }
 
-.rtl ul.checklist li{
+.rtl ul.checklist li {
     background-position: right top;
     padding-right: 56px;
-    padding-left:0;
+    padding-left: 0;
 }
+
 ul.checklist li {
     line-height: 24px;
     margin: 0;
@@ -561,78 +560,98 @@ label {
 
 header {
     background-color: darkblue;
-    width:auto;
-    display:block;
-    position:relative;
+    width: auto;
+    display: block;
+    position: relative;
     min-height: 4em;
-    color:white;
+    color: white;
     margin-bottom: 12px;
-}   
-
-header .title{
-    font-size: 2em;
-    margin-right:3em;
-    line-height: 2em;
 }
-.header-button{
+
+    header .title {
+        font-size: 2em;
+        margin-right: 3em;
+        line-height: 2em;
+    }
+
+.header-button {
     margin-left: 8px;
     margin-right: 8px;
-    
-    cursor:pointer;
+    cursor: pointer;
 }
-.header-back{
-    position:absolute;
-    top:8px;
-    left:4px;
+
+.header-back {
+    position: absolute;
+    top: 8px;
+    left: 4px;
 }
-.rtl .header-back{
-    left:auto;
+
+.rtl .header-back {
+    left: auto;
     right: 4px;
 }
 
-.header-buttons{
-    position:absolute;
-    top:8px;
-    right:4px;
+.header-buttons {
+    position: absolute;
+    top: 8px;
+    right: 4px;
 }
 
-.rtl .header-buttons{
-    right:auto;
-    left:4px;
+.rtl .header-buttons {
+    right: auto;
+    left: 4px;
 }
 
-.header-buttons > div{
-    float:right;
+.header-buttons > div {
+    float: right;
 }
 
-.rtl .header-buttons > div{
-    float:left;
-}
-input[type=url]{
-    text-align:left;
-    direction:ltr;
+.rtl .header-buttons > div {
+    float: left;
 }
 
-.input-append input
-{
+input[type=url] {
+    text-align: left;
+    direction: ltr;
+}
+
+.input-append input {
     width: 140px;
-    border-radius:0;
+    border-radius: 0;
     box-shadow: none;
-    margin-top:1px;
+    margin-top: 1px;
 }
 
 
-textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input ,
-select
-{
-    border-radius:0;
-    border-color:#CCC;
-    box-shadow:none;
+textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input,
+select {
+    border-radius: 0;
+    border-color: #CCC;
+    box-shadow: none;
 }
-select{
+
+select {
     width: 184px;
 }
 
-.fa-warning{
+.fa-warning {
     color: orange;
+}
+
+.app-logo {
+    text-align: center;
+    margin-top: 40px;
+}
+
+
+.app-logo > div {
+    display: inline-block;
+    line-height: 120px;
+    padding-right: 20px;
+    padding-left: 20px;
+}
+
+.checkouts-container{
+    margin-left:24px;
+    margin-right:24px;
 }

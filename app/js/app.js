@@ -147,7 +147,8 @@
             "MobileServicesAddress":"כתובת Mobile Services",
             "Save":"שמור",
             "AuthenticationFailed": "שם המשתמש או הסיסמה שגויים או שאינך רשום",
-            "PermitEffectiveDate":"תאריך האישור"
+            "PermitEffectiveDate": "תאריך האישור",
+            "SimplyCheck":"מבדק בטיחות"
         });
     });
 

@@ -1,6 +1,6 @@
 (function(S, SL) {
-    SL.LoginController = function ($q, $scope, loginManager, queueManager, network, networkManager, $log) {
-        $scope.changeHeader("SimplyCheck");
+    SL.LoginController = function ($q, $scope, loginManager, queueManager, network, networkManager, $log, textResource) {
+        $scope.changeHeader(textResource.get("SimplyCheck"));
         $scope.Username = "mysmallfish@gmail.com";
         $scope.Password = "1234";
         function navigate() {
