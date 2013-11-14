@@ -17,6 +17,7 @@
 
             configurationManager.save().then(navigate.back).finally(function () {
                 $scope.$emit("progress-completed");
+                $scope.$root.$broadcast("Simple.ConfigurationChanged");
             });
 
 

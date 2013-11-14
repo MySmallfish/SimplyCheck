@@ -73,6 +73,7 @@
         $rootScope.logout = function () {
             loginManager.logout().then(function () {
                 $location.path("Login");
+                $rootScope.$emit("progress-completed");
             });
         };
         var anonymousAllowed = ["views/login.html","views/configuration.html"];
@@ -153,20 +154,25 @@
     });
 
 
-    simplyLogModule.factory("entityManager", function (configurationManager) {
+    simplyLogModule.factory("entityManager", function ($rootScope, configurationManager) {
         return {
             get: function () {
-                var serverAddress = configurationManager.get("Api.Address");
-                var defaultHandler = OData.defaultHandler;
+                if (!this.manager) {
+                    var serverAddress = configurationManager.get("Api.Address");
+                    var defaultHandler = OData.defaultHandler;
 
-                breeze.config.initializeAdapterInstances({
-                    dataService: "OData"
+                    breeze.config.initializeAdapterInstances({
+                        dataService: "OData"
+                    });
+                    var dataService = new breeze.DataService({
+                        serviceName: serverAddress
+                    })
+                    this.manager = new breeze.EntityManager(serverAddress);
+                }
+                $rootScope.$on("Simple.ConfigurationChanged", function () {
+                    this.manager = null;
                 });
-                var dataService = new breeze.DataService({
-                    serviceName: serverAddress
-                })
-                var manager = new breeze.EntityManager(serverAddress);
-                return manager;
+                return this.manager;
             }
         };
         //manager.metadataStore.fetchMetadata(dataService, function (data) {

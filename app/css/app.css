@@ -562,10 +562,22 @@ header {
     background-color: darkblue;
     width: auto;
     display: block;
-    position: relative;
+    position: absolute;
+    left:0;
+    top:0;
+    right:0;
     min-height: 4em;
     color: white;
-    margin-bottom: 12px;
+}
+
+.content{
+    margin-top: 64px;
+    position: absolute;
+    left:0;
+    top:0;
+    right:0;
+    bottom:0;
+    overflow:auto;
 }
 
     header .title {
@@ -655,3 +667,4 @@ select {
     margin-left:24px;
     margin-right:24px;
 }
+

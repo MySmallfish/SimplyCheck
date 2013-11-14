@@ -18,7 +18,8 @@
         loadCheckouts();
 
         $scope.$on("SimplyLog.RefreshRequired", loadCheckouts);
-        
+        $scope.$on("Simple.ConfigurationChanged", loadCheckouts);
+
         $scope.logout = function() {
             loginManager.logout().then(function() {
                 $location.path("Login");
