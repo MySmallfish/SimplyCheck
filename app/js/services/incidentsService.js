@@ -1,6 +1,6 @@
 ﻿(function (S, SL) {
 
-    SL.IncidentsService = function ($q, utils, entityManager, queueManager) {
+    SL.IncidentsService = function ($q, utils, entityManager, queueManager, zumoClient) {
         function getEventsQuery() {
             return breeze.EntityQuery.from("Event");
         }
@@ -90,7 +90,11 @@
         function getNewIncidentDetails(checkoutId, categoryId) {
             var incidentDetails = {
                 Id: 0,
-                UniqueId: utils.guid.create()
+                UniqueId: utils.guid.create(),
+                Category: {
+                    Id: categoryId
+                },
+                ParentId: checkoutId
             };
 
             var defer = $q.defer();
@@ -126,9 +130,39 @@
             defer.resolve(incidentDetails);
             return defer.promise;
         }
+        function sendUpdates() {
+            return runSaveQueue();
+        }
+        
+        function mapIncident(incident) {
+            if (incident.Id == 0) {
+                delete incident.Id;
+            }
+            incident.CategoryId = incident.Category.Id;
+            incident.SeverityId = incident.Severity.Id;
+            if (incident.HandlingTarget) {
+                incident.HandlingTargetId = incident.HandlingTarget.Id;
+            }
+
+            delete incident.Category;
+            delete incident.Severity;
+            delete incident.HandlingTarget;
+
+            return incident;
+        }
 
         function sendIncident(incident) {
+            //if (incident == null) {
+            //    var d = $q.defer();
+            //    d.reject("Incident is null");
+            //    return d.promise;
+            //}
+            //var incidents = zumoClient.getTable("Incidents");
+            //incident = mapIncident(incident);
+            //console.log("INSERTING", incident);
+            //return $q.when(incidents.insert(incident));
             var result = $q.defer();
+
             result.resolve(incident);
             //result.reject("NA");
             return result.promise;
@@ -164,7 +198,8 @@
             getIncidentDetails: getIncidentDetails,
             getNewIncidentDetails: getNewIncidentDetails,
             save: save,
-            validate:validate
+            validate: validate,
+            sendUpdates: sendUpdates
         };
     };
     

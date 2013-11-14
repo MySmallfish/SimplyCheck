@@ -3,7 +3,7 @@
 
         function configure() {
             $routeProvider
-                .when("/", { templateUrl: "views/home.html", controller: "HomeCtrl", resolve: { pageInfo: function () { return { configuration: true, back: false, logout: true, home: false }; } } })
+                .when("/", { templateUrl: "views/home.html", controller: "HomeCtrl", resolve: { pageInfo: function () { return { configuration: true, back: false, logout: true, home: false, refresh: true }; } } })
                 .when("/Login", { templateUrl: "views/login.html", controller: "LoginCtrl", resolve: { pageInfo: function () { return { configuration: true, back: false, logout: false, home: false }; } } })
                 .when("/Incident/:checkoutId/:categoryId", { templateUrl: "views/incident.html", controller: "IncidentCtrl" })
                 .when("/Incident/:checkoutId/:categoryId/:id", { templateUrl: "views/incident.html", controller: "IncidentCtrl" })

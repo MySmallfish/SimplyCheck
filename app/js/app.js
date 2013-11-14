@@ -1,6 +1,6 @@
 ﻿(function (S, SL) {
 
-    var simplyLogModule = angular.module("SimplyLog.Checkout", ["ngRoute", "$strap", "Simple"]);
+    var simplyLogModule = angular.module("SimplyLog.Checkout", ["ngRoute","ngTouch", "$strap", "Simple"]);
 
     
 
@@ -42,11 +42,18 @@
     simplyLogModule.service("zumoClient", function (configurationManager) {
         return new WindowsAzure.MobileServiceClient(configurationManager.get("Zumo.Address"), 'IeFmiqEZkDybLqTiFONABOFvmYLVRG94');
     });
-    simplyLogModule.run(function ($rootScope, $location, loginManager, navigate) {
+    simplyLogModule.run(function ($rootScope, $location, loginManager, navigate, incidentsService, network) {
         // register listener to watch route changes
         $rootScope.changeHeader = function (header) {
             $rootScope.header = header;
         };
+
+        $rootScope.isOnline = network.isOnline();
+
+        
+        $rootScope.$on("Simple.NetworkStatusChanged", function () {
+            $rootScope.isOnline = network.isOnline();
+        });
 
         $rootScope.$on("progress-started", function () {
             $rootScope.isInProgress = true;
@@ -58,7 +65,11 @@
         $rootScope.navigatToConfiguration = function () {
             navigate.configuration();
         };
+        $rootScope.refresh = function () {
 
+            incidentsService.sendUpdates();
+            $rootScope.$broadcast("SimplyLog.RefreshRequired");
+        };
         $rootScope.logout = function () {
             loginManager.logout().then(function () {
                 $location.path("Login");
@@ -135,7 +146,8 @@
             "ApiAddress": "כתובת API",
             "MobileServicesAddress":"כתובת Mobile Services",
             "Save":"שמור",
-            "AuthenticationFailed": "שם המשתמש או הסיסמה שגויים או שאינך רשום"
+            "AuthenticationFailed": "שם המשתמש או הסיסמה שגויים או שאינך רשום",
+            "PermitEffectiveDate":"תאריך האישור"
         });
     });
 

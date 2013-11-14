@@ -3,21 +3,28 @@
         <li ng-repeat="permit in permits" ng-class="{'checked':permit.Id}">
             <div class="attachments">
                 <div class="attachment" ng-repeat="attachment in permit.Attachments">
-                    <img ng-src="{{ attachment.Url + '&s=64x64' }}" />
+                    <img ng-src="{{ attachment.Url }}" />
                 </div>
-                <div ng-hide="permit.Attachments.length >= 3" class="attachment add-attachment">+</div>
+                <div class="attachment add-attachment" ng-hide="permit.Attachments.length >=3">
+                    <div class="inner-button" ng-click="addFromCamera()"><i class="fa fa-camera"></i></div>
+                    <div class="inner-button" ng-click="addFromLibrary()"><i class="fa fa-folder-open"></i></div>
+                </div>
             </div>
             <div class="text">
-                {{ permit.Type.Name }}
-            </div>
-            <div class="date">
-                <input type="date" ng-model="permit.EffectiveDate" />
+                <h3>{{ permit.Type.Name }}</h3>
+                <div>
+                    <label for="PermitEffectiveDate">{{ "PermitEffectiveDate" | l10n }}</label>
+                    <div class="control-group input-append">
+                        <input name="PermitEffectiveDate" type="text" ng-model="permit.EffectiveDate" data-date-format="dd/mm/yyyy" bs-datepicker>
+                        <button type="button" class="btn" data-toggle="datepicker"><i class="icon-calendar"></i></button>
+                    </div>
+                </div>
             </div>
         </li>
     </ul>
 </div>
 <div class="controls">
-    <div class="button large-button" ng-click="backToCheckout()">{{"BackToCheckout"|l10n}}</div>
+    <div class="button large-button" ng-click="save()">{{"Save"|l10n}}</div>
 </div>
 
 <!--            <span>{{"EffectiveDate"|l10n}}</span>

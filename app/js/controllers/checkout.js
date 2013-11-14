@@ -14,8 +14,15 @@
             item.Valid = false;
             navigate.newIncident($scope.id, item.Id);
         };
+
+        $scope.$emit("progress-started");
         
-        $scope.checkout = checkoutService.getCheckout($scope.id);
+        checkoutService.getCheckout($scope.id).then(function (checkout) {
+            $scope.checkout = checkout;
+        }).finally(function () {
+            $scope.$emit("progress-completed");
+        });
+        
         
 
     };

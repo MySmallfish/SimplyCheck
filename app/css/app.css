@@ -149,10 +149,6 @@ div.sort {
     float: left;
 }
 
-div.sort:after {
-    font-family: "Webdings";
-    content: '6';
-}
 
 .sortDropDown {
     position: absolute;
@@ -214,6 +210,7 @@ div.sort:after {
     float: left;
     width: 400px;
     min-height: 4em;
+    font-size: 140%;
 }
 
 .button {
@@ -225,7 +222,9 @@ div.sort:after {
     font-weight: bold;
     font-size: 12pt;
     background-color: #E5E5E5;
+    background-color: #CCC;
     cursor: pointer;
+    -webkit-appearance: none;
 }
 
 a.button,
@@ -250,6 +249,9 @@ a.button:hover {
     padding: 8px;
     padding-right: 12px;
     padding-left: 12px;
+    line-height: 32px;
+    padding-right: 20px;
+    padding-left: 20px;
 }
 
 .checkout .button.valid {
@@ -438,19 +440,28 @@ ul.checklist {
 }
 
 .rtl ul.checklist {
-    padding-left: 0;
-    padding-right: 56px;
+    list-style-image:none;
+    list-style-type:none;
 }
 
 
 ul.checklist li.checked {
-    list-style-image: url(../img/checkbox_checked.png);
+    
+    background: url(../img/checkbox_checked.png) no-repeat left top;
+    
 }
+
 
 ul.checklist li {
-    list-style-image: url(../img/checkbox_unchecked.png);
+    background: url(../img/checkbox_unchecked.png) no-repeat left top;
+    padding-left: 56px;
 }
 
+.rtl ul.checklist li{
+    background-position: right top;
+    padding-right: 56px;
+    padding-left:0;
+}
 ul.checklist li {
     line-height: 24px;
     margin: 0;
@@ -555,6 +566,7 @@ header {
     position:relative;
     min-height: 4em;
     color:white;
+    margin-bottom: 12px;
 }   
 
 header .title{
@@ -599,4 +611,28 @@ header .title{
 input[type=url]{
     text-align:left;
     direction:ltr;
+}
+
+.input-append input
+{
+    width: 140px;
+    border-radius:0;
+    box-shadow: none;
+    margin-top:1px;
+}
+
+
+textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input ,
+select
+{
+    border-radius:0;
+    border-color:#CCC;
+    box-shadow:none;
+}
+select{
+    width: 184px;
+}
+
+.fa-warning{
+    color: orange;
 }

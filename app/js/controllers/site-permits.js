@@ -10,11 +10,17 @@
             return result;
         };
 
-        $scope.backToCheckout = function() {
+        $scope.save = function() {
             location.href = "#/Checkout/1";
         };
         
-        $scope.permits = locationsService.getSitePermits($routeParams.id);
+        $scope.$emit("progress-started");
+        locationsService.getSitePermits($routeParams.id).then(function (permits) {
+            $scope.permits = permits;
+        }).finally(function () {
+            $scope.$emit("progress-completed");
+        });
+        
     };
 
 })(Simple, SimplyLog);

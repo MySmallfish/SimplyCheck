@@ -70,6 +70,7 @@
 
         incidentDetails.then(function (details) {
             $scope.incident = details;
+
             setDefaultSeverity();
         });
 
