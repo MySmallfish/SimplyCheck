@@ -65,6 +65,8 @@
         $rootScope.navigatToConfiguration = function () {
             navigate.configuration();
         };
+
+
         $rootScope.refresh = function () {
 
             incidentsService.sendUpdates();
@@ -149,7 +151,8 @@
             "Save":"שמור",
             "AuthenticationFailed": "שם המשתמש או הסיסמה שגויים או שאינך רשום",
             "PermitEffectiveDate": "תאריך האישור",
-            "SimplyCheck":"מבדק בטיחות"
+            "SimplyCheck": "מבדק בטיחות",
+            "FilteredForSite":"מבדקים לאתר:"
         });
     });
 
@@ -169,8 +172,9 @@
                     })
                     this.manager = new breeze.EntityManager(serverAddress);
                 }
+                var self = this;
                 $rootScope.$on("Simple.ConfigurationChanged", function () {
-                    this.manager = null;
+                    self.manager = null;
                 });
                 return this.manager;
             }

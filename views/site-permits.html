@@ -1,7 +1,7 @@
 ﻿<div class="checklist-container">
     <ul class="checklist">
-        <li ng-repeat="permit in permits" ng-class="{'checked':permit.Id}">
-            <div class="attachments">
+        <li ng-repeat="permit in permits" ng-class="{'checked':permit.HasPermit}" ng-click="permit.HasPermit = !permit.HasPermit">
+            <div class="attachments" ng-hide="true">
                 <div class="attachment" ng-repeat="attachment in permit.Attachments">
                     <img ng-src="{{ attachment.Url }}" />
                 </div>

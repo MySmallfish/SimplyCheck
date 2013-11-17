@@ -6,6 +6,7 @@
             var items = [
                 {
                     Id: 1,
+                    HasPermit: true,
                     EffectiveDate: new Date(),
                     Type: {
                         Id: 2,
@@ -26,7 +27,8 @@
                         { Index: 2, Url: "https://bt.ylm.co.il/Download.ashx?p=Attachments/Event/386/image[72ec29c9-ff32-4762-96d8-4180d1806663].jpg" }]
                 },
                 {
-                    Id: 1,
+                    Id: 2,
+                    HasPermit: true,
                     EffectiveDate: new Date(),
                     Type: {
                         Id: 2,

@@ -17,10 +17,17 @@
     {{ "Search" | l10n }}:
     <input type="text" class="search" ng-model="search" placeholder="{{ 'TypeToSearch' | l10n }}" />
 </div>
+<div ng-show="selectedSiteName">
+    <div class="alert alert-info alert-dismissable">
+        <button type="button" class="close" ng-click="clearSiteFilter()" aria-hidden="true">&times;</button>
+        <strong>{{"FilteredForSite"|l10n}}</strong> {{selectedSiteName}}
+    </div>
+</div>
 <div class="checkouts-container">
-    <div ng-class="{ 'checkout-item': true, done: item.status==2, inprogress: item.status==1 }"
-         ng-repeat="item in items | filter:search | orderBy:orderBy:isDescending">
-        <a ng-href="#Checkout/{{item.id}}">
+    <div ng-class="{ 'checkout-item': true, done: item.status==2, inprogress: item.status==1, multiple: item.multiple }"
+         ng-repeat="item in items | filter:search | orderBy:orderBy:isDescending"
+         ng-click="select(item)">
+        <div class="badge badge-success">{{item.checkouts}}</div>
             <div class="date">{{item.date | date: "dd/MM/yyyy"}}</div>
             <div class="header">{{item.header}}</div>
             <div class="progress"></div>
@@ -32,7 +39,6 @@
                     <span class="total">{{item.count}}</span>
                 </div>
             </div>
-        </a>
     </div>
 </div>
 <div class="clearfix"></div>

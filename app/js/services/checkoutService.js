@@ -1,6 +1,6 @@
 ﻿(function (S, SL) {
 
-    SL.CheckoutService = function ($q, incidentsService, entityManager) {
+    SL.CheckoutService = function ($q, incidentsService, entityManager, $cacheFactory) {
         function getCheckoutQuery() {
             var query = breeze.EntityQuery.from("Checkout").select([
                            "Id", "Description",
@@ -16,9 +16,10 @@
 
         function mapCheckout(item) {
             return {
-                id: parseInt(item.Id,10),
+                id: parseInt(item.Id, 10),
                 header: item.LocationLevel1,
-                status: item.Status == 1 ? (item.ChildEvents > 0)?1: 0 : 2,
+                siteId: item.LocationEntityId,
+                status: item.Status == 1 ? (item.ChildEvents > 0) ? 1 : 0 : 2,
                 count: item.ChildEvents,
                 open: item.OpenChildrenCount,
                 date: item.StartTime
@@ -96,27 +97,71 @@
             });
             return root;
         }
+        var checkoutsCache = $cacheFactory("checkouts"),
+            checkoutDetailsCache = $cacheFactory("checkoutDetails", { capacity: 20 }),
+            categoriesCache = $cacheFactory("categories");
 
-        function getCheckouts(employeeId) {
+        function clearCache() {
+            checkoutsCache.removeAll();
+            checkoutDetailsCache.removeAll();
+            categoriesCache.removeAll();
+        }
+        function getCheckouts(employeeId, siteId) {
             var query = getCheckoutQuery();
-           
-            return $q.when(entityManager.get().executeQuery(query)).then(function (data) {
-                return _.map(data.results, mapCheckout);
-            }, function (err) {
-                console.error(err);
-            });
+            var result = null;
+            var cached = checkoutsCache.get("checkouts");
+            
+            if (cached) {
+                result = $q.when(cached);
+            } else {
+                result = $q.when(entityManager.get().executeQuery(query)).then(function (data) {
+                    var items = _.map(data.results, mapCheckout);
+                    
+                    checkoutsCache.put("checkouts", items);
+                    return items;
 
+                }, function (err) {
+                    console.error(err);
+                });
+            }
 
+            if (siteId) {
+                result = result.then(function (items) {
+                    return _.where(items, { siteId: siteId });
+                });
+            }
+
+            return result;
         }
 
         function getCheckout(id) {
             id = parseInt(id, 10);
-            
-            return $q.all([ $q.when(entityManager.get().fetchEntityByKey("Checkout", id, true)).then(function (checkout) {
-                checkout = checkout.entity;
+            var cached = checkoutDetailsCache.get(id),
+                checkout;
+
+            if (cached) {
+                checkout = $q.when(cached);
+            } else {
+                checkout = $q.when(entityManager.get().fetchEntityByKey("Checkout", id, true)).then(function (item) {
+                    item = item.entity;
+                    if (item) {
+                        checkoutDetailsCache.put(id, item);
+                    }
+                    return item;
+                });
+            }
+            return $q.all([checkout.then(function (checkout) {
+                
                 if (checkout) {
-                    var categoriesQuery = breeze.EntityQuery.from("Category").where("RootId", "equals", parseInt(checkout.CategoryId, 10));
-                    return $q.when(entityManager.get().executeQuery(categoriesQuery)).then(function (categories) {
+                    var rootCategoryId = parseInt(checkout.CategoryId, 10);
+                    var categoriesQuery = breeze.EntityQuery.from("Category").where("RootId", "equals", rootCategoryId),
+                        cachedCategories = categoriesCache.get(rootCategoryId);
+                    
+                     var categoriesPromise = cachedCategories ? $q.when(cachedCategories) : $q.when(entityManager.get().executeQuery(categoriesQuery)).then(function (cats) {
+                            categoriesCache.put(rootCategoryId, cats);
+                            return cats;
+                        });
+                    return categoriesPromise.then(function (categories) {
                         return {
                             checkout: checkout, categories: _.map(categories.results, mapCategory)
                         };
@@ -126,7 +171,7 @@
                 }
             }), incidentsService.getCheckoutIncidents(id)]).then(function (results) {
                 var checkout = results[0].checkout, items = results[0].categories, incidents = results[1];
-                
+
                 var result = prepareCheckoutViewModel(items, checkout, incidents);
                 return result;
             });
@@ -135,7 +180,8 @@
 
         return {
             getCheckouts: getCheckouts,
-            getCheckout: getCheckout
+            getCheckout: getCheckout,
+            clearCache: clearCache
         };
     };
 
