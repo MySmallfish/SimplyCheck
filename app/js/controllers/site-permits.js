@@ -14,13 +14,20 @@
         };
 
         $scope.save = function () {
-            console.log("permits:", $scope.permits);
-            //save to $scope.siteId
-            $location.path("/Checkout/" + $scope.checkoutId);
+
+            $scope.$emit("progress-started");
+            locationsService.saveSitePermits($scope.siteId, $scope.permits).then(function () {
+                
+                $location.path("/Checkout/" + $scope.checkoutId);
+            }).finally(function () {
+                $scope.$emit("progress-completed");
+            });
+            
         };
         
         $scope.$emit("progress-started");
         locationsService.getSitePermits($scope.siteId).then(function (permits) {
+            console.log("PERMITS", permits);
             $scope.permits = permits;
         }).finally(function () {
             $scope.$emit("progress-completed");

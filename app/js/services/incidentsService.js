@@ -1,6 +1,8 @@
 ﻿(function (S, SL) {
 
-    SL.IncidentsService = function ($q, utils, entityManager, queueManager, zumoClient) {
+    SL.IncidentsService = function ($q, utils, entityManager, queueManager, zumoClient, $cacheFactory) {
+        var incidentsCache = $cacheFactory("incidents");
+
         function getEventsQuery() {
             return breeze.EntityQuery.from("Event");
         }
@@ -50,7 +52,7 @@
             });
         }
                 
-        function getCheckoutIncidents(checkoutId) {
+        function getCheckoutIncidentsFromServer(checkoutId) {
             var parentId = breeze.Predicate.create("ParentEventId", "==", checkoutId),
                 rowStatus = breeze.Predicate.create("RowStatus", "==", 0);
 
@@ -76,6 +78,14 @@
                     return result;
                 });
             });
+        }
+        function getCheckoutIncidents(checkoutId) {
+            var cachedIncidents = incidentsCache.get(checkoutId);
+            if (cachedIncidents) {
+                return $q.when(cachedIncidents);
+            } else {
+                return getCheckoutIncidentsFromServer(checkoutId);
+            }
         }
 
         function getHandlingTargets() {
@@ -175,9 +185,7 @@
 
         function validate(incident) {
             var result = $q.defer();
-            console.log("VALID", incident);
             result.resolve(incident);
-
             return result.promise;
         }
 
@@ -185,9 +193,21 @@
             incidentsQueue.run();
             return incident;
         }
+
+        function pushIncidentToCache(incident) {
+            var cachedIncidents = incidentsCache.get(incident.ParentId);
+            if (!cachedIncidents) {
+                cachedIncidents = [];
+                incidentsCache.put(incident.ParentId, cachedIncidents);
+            }
+
+            cachedIncidents.push(incident);
+            return incident;
+        }
         function save(incident) {
             return validate(incident)
                             .then(incidentsQueue.push)
+                            .then(pushIncidentToCache)
                             .then(runSaveQueue);
         }
 

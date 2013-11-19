@@ -1,5 +1,6 @@
-﻿<div class="controls top">
-    <a class="button large-button" ng-href="#/SitePermits/{{checkout.Site.Id}}/{{id}}">{{"RequiredPermits"|l10n}}</a>
+﻿<h3 ng-show="checkout">{{ checkout.Type }}, {{ checkout.Site.FullName }}</h3>
+<div class="controls top">
+    <button ng-disabled="!checkout.Site || !checkout.Site.Id" class="button large-button" ng-click="displaySitePermits()">{{"RequiredPermits"|l10n}}</button>
 </div>
 <div class="filters">
     {{ "Search" | l10n }}:
@@ -25,22 +26,31 @@
                                     {{child.Name}}
                                 </div>
                                 <div class="text">{{child.Text}}</div>
-                                <div class="button large-button valid" ng-click="markAsValid(child);">{{"Valid"|l10n}}</div>
-                                <div class="button large-button invalid" ng-click="markAsInValid(child);">{{"Invalid"|l10n}}</div>
-                                <div ng-show="child.Incidents.length" class="incidents" ng-class="{ 'collapsed': child.IncidentsCollapsed}">
-                                    <div class="incidents-header" ng-click="child.IncidentsCollapsed = !child.IncidentsCollapsed">
+                                <!--
+                                    <div class="button large-button valid" ng-click="markAsValid(child);">{{"Valid"|l10n}}</div>
+                                    ng-click="child.IncidentsCollapsed = !child.IncidentsCollapsed"
+                                    -->
+                                <div class="incidents" ng-class="{ 'collapsed': child.IncidentsCollapsed}">
+                                    <div ng-hide="child.Incidents.length" class="incidents-header">
+                                        {{ "NoIncidents"|l10n }}
+                                    </div>
+                                    <div ng-show="child.Incidents.length" class="incidents-header" >
                                         {{ child.Incidents.length }} {{ "Incidents"|l10n }}
                                     </div>
-                                    <div class="incidents-items">
+                                    <div class="incidents-items" ng-show="child.Incidents.length">
                                         <ul>
-                                            <li ng-repeat="incident in child.Incidents">
-                                                <span>{{ incident.Severity.Name }}</span>
+                                            <li ng-repeat="incident in child.Incidents track by incident.UniqueId | orderBy:'Severity.Name'">
+                                                <span class="severity-hint" ng-style="{ 'background-color': incident.Severity.Color }">{{ incident.Severity.Name }}</span>
                                                 {{ incident.Description }}
                                                 <div class="button edit-checkout-item" ng-click="navigateToIncident(child, incident.Id);">{{"Edit"|l10n}}</div>
                                             </li>
                                         </ul>
                                     </div>
+                                    <div class="button large-button invalid" ng-click="markAsInValid(child);">{{"Invalid"|l10n}}</div>
+
                                 </div>
+                                
+                                
                             </li>
                         </ul>
                     </div>

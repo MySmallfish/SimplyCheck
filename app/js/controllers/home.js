@@ -19,11 +19,13 @@
                         var sorted = _.sortBy(group, "date");
                         sorted = sorted.reverse();
                         var sumOpen = _.reduce(group, function (memo, item) {
-                            return memo.open + item.open;
-                        });
+                            memo = memo + item.open;
+                            return memo;
+                        }, 0);
                         var sumAll = _.reduce(group, function (memo, item) {
-                            return memo.count + item.count;
-                        });
+                            memo = memo + item.count;
+                            return memo;
+                        }, 0);
                         if (isNaN(sumOpen)) sumOpen = 0;
                         if (isNaN(sumAll)) sumAll = 0;
                         return {

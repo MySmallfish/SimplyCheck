@@ -1,50 +1,85 @@
 ﻿(function (S, SL) {
 
-    SL.LocationsService = function ($q) {
+    SL.LocationsService = function ($q, queueManager, $http, configurationManager, $cacheFactory) {
+        var sitePermitsCache = $cacheFactory("sitePermits");
+
+        var permitsQueue = queueManager.get({
+            name: "Permits",
+            processItemAction: sendPermit
+        });
+
+        function sendPermit(permit) {
+            console.log("SENDING PERMIT: ", permit);
+            var result = $q.defer();
+            result.resolve(permit);
+            return result.promise;
+        }
+
+        function saveSitePermits(siteId, permits) {
+            return validateSitePermits(permits)
+                            .then(function (items) {
+                                var cachedPermits = sitePermitsCache.get(siteId);
+                                if (!cachedPermits) {
+                                    cachedPermits = [];
+                                    sitePermitsCache.put(siteId, cachedPermits);
+                                }
+                                
+                                items = _.map(items, function (item) {
+                                    return {
+                                        SiteId: siteId,
+                                        PermitTypeId: item.Type.Id,
+                                        EffectiveDate: item.EffectiveDate
+                                    };
+                                });
+
+                                _.each(items, function (permit) {
+                                    permitsQueue.push(permit);
+                                    cachedPermits.push(permit);
+                                });
+                            })
+                            .then(runPermitsQueue);
+        }
+
+        function validateSitePermits(permits) {
+            var result = $q.defer();
+            result.resolve(permits);
+            return result.promise;
+        }
+
+        function runPermitsQueue() {
+            permitsQueue.run();
+        }
 
         function getSitePermits(siteId) {
-            var items = [
-                {
-                    Id: 1,
-                    HasPermit: true,
-                    EffectiveDate: new Date(),
-                    Type: {
-                        Id: 2,
-                        Name: "אמצעי כיבוי",
-                        DaysDuration: 180
+            var apiAddress = configurationManager.get("Api.Address");
+            var cachedPermits = sitePermitsCache.get(siteId);
+            if (cachedPermits) {
+                return $q.when(cachedPermits);
+            } else {
+                return $http({
+                    method: "POST",
+                    url: apiAddress + "Site(" + siteId + ")/RequiredPermits",
+                    header: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
                     }
-                },
-                {
-                    Id: 0,
-                    EffectiveDate: null,
-                    Type: {
-                        Id: 2,
-                        Name: "יציבות המבנה",
-                        DaysDuration: 120
-                    },
-                    Attachments: [
-                        { Index: 1, Url: "https://bt.ylm.co.il/Download.ashx?p=Attachments/Event/386/image[72ec29c9-ff32-4762-96d8-4180d1806663].jpg" },
-                        { Index: 2, Url: "https://bt.ylm.co.il/Download.ashx?p=Attachments/Event/386/image[72ec29c9-ff32-4762-96d8-4180d1806663].jpg" }]
-                },
-                {
-                    Id: 2,
-                    HasPermit: true,
-                    EffectiveDate: new Date(),
-                    Type: {
-                        Id: 2,
-                        Name: "מכשירי חשמל ומתקני חשמל - בדיקה ויזואלית חשמלאי מוסמך",
-                        DaysDuration: 80
-                    },
-                    Attachments: [
-                        { Index: 1, Url: "https://bt.ylm.co.il/Download.ashx?p=Attachments/Event/386/image[72ec29c9-ff32-4762-96d8-4180d1806663].jpg" },
-                        { Index: 2, Url: "https://bt.ylm.co.il/Download.ashx?p=Attachments/Event/386/image[72ec29c9-ff32-4762-96d8-4180d1806663].jpg" },
-                        { Index: 3, Url: "https://bt.ylm.co.il/Download.ashx?p=Attachments/Event/386/image[72ec29c9-ff32-4762-96d8-4180d1806663].jpg" },
-                    ]
-                },
-            ];
-            var defer = $q.defer();
-            defer.resolve(items);
-            return defer.promise;
+                }).then(function (data) {
+                    var items = _.map(data.data.value, function (item) {
+                        return {
+                            Id: item.PermitId || 0,
+                            HasPermit: Boolean(item.PermitId),
+                            EffectiveDate: item.EffectiveDate,
+                            Type: {
+                                Id: item.PermitTypeId,
+                                Name: item.PermitTypeName,
+                                DaysDuration: item.PermitTypeDaysDuration
+                            }
+                        }
+                    });
+                    sitePermitsCache.put(siteId, items);
+                    return items;
+                });
+            }
         }
 
         function getSites(employeeId) {
@@ -93,7 +128,9 @@
 
         return {
             getSites: getSites,
-            getSitePermits: getSitePermits
+            getSitePermits: getSitePermits,
+            saveSitePermits: saveSitePermits,
+            validateSitePermits: validateSitePermits
         };
     };
 

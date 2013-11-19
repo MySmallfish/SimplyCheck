@@ -1,5 +1,5 @@
-﻿<div class="checklist-container">
-    <ul class="checklist">
+﻿<div class="checklist-container clearfix">
+    <ul class="checklist halfs">
         <li ng-repeat="permit in permits" ng-class="{'checked':permit.HasPermit}" ng-click="permit.HasPermit = !permit.HasPermit">
             <div class="attachments" ng-hide="true">
                 <div class="attachment" ng-repeat="attachment in permit.Attachments">
@@ -27,7 +27,3 @@
     <div class="button large-button" ng-click="save()">{{"Save"|l10n}}</div>
 </div>
 
-<!--            <span>{{"EffectiveDate"|l10n}}</span>
-            <span>{{ permit.EffectiveDate | date:"dd/MM/yyyy" }}</span>
-            <span class="button">{{"Change"|l10n}}</span>
-            <span class="button">{{"Clear"|l10n}}</span>-->

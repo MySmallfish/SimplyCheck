@@ -58,12 +58,13 @@ button {
     margin: 0.5em;
     padding: 0.5em;
     cursor: pointer;
-    position:relative;
+    position: relative;
 }
 
 .site {
     border: solid 4px transparent;
 }
+
 .checkout-item {
     height: 8em;
 }
@@ -122,27 +123,27 @@ button {
 .children-count .total {
     font-size: 24pt;
 }
-.checkout-item .badge{
-    display:none;
+
+.checkout-item .badge {
+    display: none;
 }
 
-.checkout-item.multiple .badge{
-    display:block;
+.checkout-item.multiple .badge {
+    display: block;
 }
 
-.checkout-item.multiple .badge{
-    
-    font-size:10pt;
-    position:absolute;
-    right:-4px;
-    top:-4px;
-
+.checkout-item.multiple .badge {
+    font-size: 10pt;
+    position: absolute;
+    right: -4px;
+    top: -4px;
 }
 
-.rtl .checkout-item.multiple .badge{
-    right:auto;
-    left:-4px;
+.rtl .checkout-item.multiple .badge {
+    right: auto;
+    left: -4px;
 }
+
 h1 {
     margin-top: 0;
     margin-bottom: 8px;
@@ -215,6 +216,15 @@ div.sort {
         margin-bottom: 8px;
     }
 
+.checkout .incidents ul li {
+    margin-bottom: 1px;
+}
+
+.checkout .incidents ul li .button{
+    background-color: transparent;
+    color:blue;
+    margin:0;
+}
 .checkout .bullet {
     font-weight: bold;
     float: left;
@@ -228,7 +238,7 @@ div.sort {
 
 .checkout .text {
     float: left;
-    width: 400px;
+    width: 45%;
     min-height: 4em;
     font-size: 140%;
 }
@@ -260,7 +270,6 @@ a.button:hover {
 }
 
 .checkout .button {
-    width: 160px;
     float: right;
 }
 
@@ -306,8 +315,11 @@ a.button:hover {
 }
 
 .incidents {
-    margin-left: 60px;
-    clear: both;
+    margin-left: 20px;
+    float: right;
+    width: 40%;
+    background-color: #DDD;
+    /*clear: both;*/
 }
 
     .incidents ul,
@@ -317,14 +329,15 @@ a.button:hover {
     }
 
 .rtl .incidents {
-    margin-right: 60px;
+    margin-right: 20px;
     margin-left: 0;
+    float: left;
 }
 
 .incidents-header {
-    font-size: 14pt;
+    font-size: 12pt;
+    font-weight: bold;
     cursor: pointer;
-    border-bottom: solid 1px #DDd;
 }
 
 .collapsed .children {
@@ -335,30 +348,37 @@ a.button:hover {
     cursor: pointer;
 }
 
-.collapsed .incidents-header {
-    color: #444;
-    font-weight: bold;
-    font-style: italic;
-    border: none;
-}
 
 .collapsed .incidents-items {
     display: none;
 }
 
+.incidents-items {
+    height: 5em;
+    overflow: auto;
+    background-color:white;
+    margin:4px;
+}
+
 .severities {
     clear: both;
 }
-
+.severity-hint,
+.severity{
+    text-align: center;
+    display: inline-block;
+    color: white;
+}
+.severity-hint{
+    padding-left:4px;
+    padding-right:4px;
+}
 .severity {
     width: 48px;
     height: 48px;
     margin: 8px;
     font-size: 32px;
     line-height: 48px;
-    text-align: center;
-    display: inline-block;
-    color: white;
     cursor: pointer;
 }
 
@@ -456,7 +476,11 @@ ul.checklist {
     padding: 0;
     margin: 0;
     padding-left: 56px;
+    clear:both;
+    zoom:1;
 }
+
+
 
 .rtl ul.checklist {
     list-style-image: none;
@@ -492,7 +516,27 @@ ul.checklist li {
     ul.checklist li .text {
         font-size: 16pt;
     }
-
+    ul.checklist li label{
+        width:auto;
+        
+    }
+    ul.checklist li .control-group{
+        display:inline-block;
+    }
+    ul.checklist li input[type=text]{
+        width:80px;
+    }
+    ul.checklist.halfs li{
+    display:block;
+    width:40%;
+    float:left;
+    clear:none;
+    overflow:auto;
+    margin:4px;
+}
+.rtl ul.checklist.halfs li{
+    float:right;
+}
 .attachments {
     float: right;
     margin-left: 8px;
@@ -582,28 +626,28 @@ header {
     width: auto;
     display: block;
     position: absolute;
-    left:0;
-    top:0;
-    right:0;
+    left: 0;
+    top: 0;
+    right: 0;
     min-height: 4em;
     color: white;
 }
 
-.content{
+.content {
     margin-top: 64px;
     position: absolute;
-    left:0;
-    top:0;
-    right:0;
-    bottom:0;
-    overflow:auto;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    overflow: auto;
 }
 
-    header .title {
-        font-size: 2em;
-        margin-right: 3em;
-        line-height: 2em;
-    }
+header .title {
+    font-size: 2em;
+    margin-right: 3em;
+    line-height: 2em;
+}
 
 .header-button {
     margin-left: 8px;
@@ -650,7 +694,7 @@ input[type=url] {
     width: 140px;
     border-radius: 0;
     box-shadow: none;
-    margin-top: 1px;
+    margin-top: 2px;
 }
 
 
@@ -674,34 +718,64 @@ select {
     margin-top: 40px;
 }
 
-.app-logo > div {
-    display: inline-block;
-    line-height: 120px;
-    padding-right: 20px;
-    padding-left: 20px;
+    .app-logo > div {
+        display: inline-block;
+        line-height: 120px;
+        padding-right: 20px;
+        padding-left: 20px;
+    }
+
+.checkouts-container {
+    margin-left: 24px;
+    margin-right: 24px;
 }
 
-.checkouts-container{
-    margin-left:24px;
-    margin-right:24px;
-}
 
-
-@media(max-width:321px){
-    .app-logo{
+@media(max-width:720px) {
+    .app-logo {
         margin-top: 0px;
     }
-    .app-logo > div {
-        line-height: 80px;
-    }
-    .container-fluid{
-        padding-right:0;
-        padding-left:0;
 
+        .app-logo > div {
+            line-height: 80px;
+        }
+
+    .container-fluid {
+        padding-right: 0;
+        padding-left: 0;
     }
 
-    .checkout-item{
-        padding:0.3em;
+    .checkout .text,
+    .checkout .incidents {
+        width: auto;
+        float: none;
+        clear: both;
+    }
+
+    .checkout .incidents {
+        margin: 0;
+    }
+
+    .large-button {
+        padding: 4px;
+        font-size: 10pt;
+    }
+
+    .checkout .button {
+        width: 80px;
+    }
+
+
+    .checkout ul {
+        margin: 2px;
+    }
+
+    .checkout-item {
+        padding: 0.3em;
+    }
+
+    ul.checklist.halfs li{
+        float:none;
+        width:auto;
     }
 }
-

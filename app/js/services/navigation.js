@@ -6,10 +6,10 @@
                 .when("/", { templateUrl: "views/home.html", controller: "HomeCtrl", resolve: { pageInfo: function () { return { configuration: true, back: false, logout: true, home: false, refresh: true }; } } })
                 .when("/Login", { templateUrl: "views/login.html", controller: "LoginCtrl", resolve: { pageInfo: function () { return { configuration: true, back: false, logout: false, home: false }; } } })
                 .when("/Incident/:checkoutId/:categoryId", { templateUrl: "views/incident.html", controller: "IncidentCtrl" })
-                .when("/Incident/:checkoutId/:categoryId/:id", { templateUrl: "views/incident.html", controller: "IncidentCtrl" })
+                .when("/Incident/:checkoutId/:categoryId/:uniqueId", { templateUrl: "views/incident.html", controller: "IncidentCtrl" })
                 .when("/Checkout/:id", { templateUrl: "views/checkout.html", controller: "CheckoutCtrl" })
                 .when("/NewCheckout", { templateUrl: "views/new-checkout.html", controller: "NewCheckoutCtrl" })
-                .when("/SitePermits/:id/:checkoutId", { templateUrl: "views/site-permits.html", controller: "SitePermitsCtrl" })
+                .when("/SitePermits/:checkoutId/:siteId", { templateUrl: "views/site-permits.html", controller: "SitePermitsCtrl" })
                 .when("/Configuration", { templateUrl: "views/configuration.html", controller: "ConfigurationCtrl", resolve: { pageInfo: function () { return { configuration:false,  back: true, logout: false, home: false }; } } })
                 .otherwise({ redirectTo: "/" });
         }
@@ -32,17 +32,24 @@
             return incident(checkoutId, categoryId);
         }
 
-        function incident(checkoutId, categoryId, id) {
+        function incident(checkoutId, categoryId, uniqueId) {
             var path = "Incident/" + String(checkoutId) + "/" + String(categoryId);
-            if (id) {
-                path += "/" + String(id);
+            if (uniqueId) {
+                path += "/" + String(uniqueId);
             }
+            return $location.path(path);
+        }
+
+        function sitePermits(checkoutId, siteId) {
+            var path = "SitePermits/" + String(checkoutId) + "/" + String(siteId);
+
             return $location.path(path);
         }
 
         return {
             newIncident: newIncident,
             incident: incident,
+            sitePermits: sitePermits,
             back: back,
             configuration: configuration
         }

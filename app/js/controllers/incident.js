@@ -1,18 +1,17 @@
 ﻿(function (S, SL) {
 
-    SL.IncidentController = function ($q, $scope, $routeParams, incidentsService, camera, attachmentsManager, textResource, navigate) {
+    SL.IncidentController = function ($q, $scope, $routeParams, $route, incidentsService, camera, attachmentsManager, textResource, navigate) {
         $scope.categoryId = parseInt($routeParams.categoryId, 10);
         $scope.checkoutId = parseInt($routeParams.checkoutId, 10);
 
         if ($routeParams.id) {
-            $scope.id = parseInt($routeParams.id, 10);
+            $scope.uniqueId = $routeParams.uniqueId;
             $scope.changeHeader(textResource.get("NewIncident"));
         } else {
             $scope.changeHeader(textResource.get("EditIncident"));
         }
 
         function saveIncident() {
-            console.log("INCIDENt", $scope.incident);
             return incidentsService.save($scope.incident);
             
             var result = $q.defer();
@@ -32,7 +31,12 @@
         $scope.saveAndNew = function () {
             if ($scope.incident) {
                 saveIncident().then(function () {
-                    navigate.newIncident($scope.checkoutId, $scope.categoryId);
+                    if ($scope.incident.Id == 0) {
+                        $route.reload();
+                    } else {
+                        navigate.newIncident($scope.checkoutId, $scope.categoryId);
+                    }
+                    
                 });
             }
         };
@@ -62,8 +66,8 @@
 
         $scope.targets = incidentsService.getHandlingTargets();
         var incidentDetails;
-        if ($scope.id) {
-            incidentDetails = incidentsService.getIncidentDetails($scope.id);
+        if ($scope.uniqueId) {
+            incidentDetails = incidentsService.getIncidentDetails($scope.uniqueId);
         } else {
             incidentDetails = incidentsService.getNewIncidentDetails($scope.checkoutId, $scope.categoryId);
         }

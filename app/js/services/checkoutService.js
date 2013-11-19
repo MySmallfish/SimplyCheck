@@ -1,6 +1,10 @@
 ﻿(function (S, SL) {
 
     SL.CheckoutService = function ($q, incidentsService, entityManager, $cacheFactory) {
+        var checkoutsCache = $cacheFactory("checkouts"),
+            checkoutDetailsCache = $cacheFactory("checkoutDetails", { capacity: 50 }),
+            categoriesCache = $cacheFactory("categories");
+
         function getCheckoutQuery() {
             var query = breeze.EntityQuery.from("Checkout").select([
                            "Id", "Description",
@@ -9,9 +13,42 @@
                            "FreeText1", "FreeText2",
                            "StartTime", "CloseTime", "DueTime",
                            "Status",
-                           "CategoryId"
+                           "CategoryId", "EventCategoryName"
             ]);
             return query;
+        }
+
+        function clearCache() {
+            checkoutsCache.removeAll();
+            checkoutDetailsCache.removeAll();
+            categoriesCache.removeAll();
+        }
+        function getCheckouts(employeeId, siteId) {
+            var query = getCheckoutQuery();
+            var result = null;
+            var cached = checkoutsCache.get("checkouts");
+
+            if (cached) {
+                result = $q.when(cached);
+            } else {
+                result = $q.when(entityManager.get().executeQuery(query)).then(function (data) {
+                    var items = _.map(data.results, mapCheckout);
+
+                    checkoutsCache.put("checkouts", items);
+                    return items;
+
+                }, function (err) {
+                    console.error(err);
+                });
+            }
+
+            if (siteId) {
+                result = result.then(function (items) {
+                    return _.where(items, { siteId: siteId });
+                });
+            }
+
+            return result;
         }
 
         function mapCheckout(item) {
@@ -63,24 +100,25 @@
                 var category = map[incident.Category.Id];
                 if (category) {
                     category.Incidents = category.Incidents || [];
-                    category.Incidents.push(incident);
+                    category.Incidents.push(incident);                   
                 }
             });
         }
 
         function prepareCheckoutViewModel(items, checkout, incidents) {
             var map = createMap(items);
-
+            
             assignIncidents(map, incidents);
 
             var checkoutViewModel = {
                 Items: buildHierarchy(map, checkout.CategoryId),
+                Type: checkout.EventCategoryName,
                 Site: {
                     Id: checkout.LocationEntityId,
-                    Name: checkout.LocationFullName
+                    Name: checkout.LocationLevel1,
+                    FullName: checkout.LocationFullName
                 }
             };
-
             return checkoutViewModel;
         }
 
@@ -97,48 +135,12 @@
             });
             return root;
         }
-        var checkoutsCache = $cacheFactory("checkouts"),
-            checkoutDetailsCache = $cacheFactory("checkoutDetails", { capacity: 20 }),
-            categoriesCache = $cacheFactory("categories");
 
-        function clearCache() {
-            checkoutsCache.removeAll();
-            checkoutDetailsCache.removeAll();
-            categoriesCache.removeAll();
-        }
-        function getCheckouts(employeeId, siteId) {
-            var query = getCheckoutQuery();
-            var result = null;
-            var cached = checkoutsCache.get("checkouts");
-            
-            if (cached) {
-                result = $q.when(cached);
-            } else {
-                result = $q.when(entityManager.get().executeQuery(query)).then(function (data) {
-                    var items = _.map(data.results, mapCheckout);
-                    
-                    checkoutsCache.put("checkouts", items);
-                    return items;
-
-                }, function (err) {
-                    console.error(err);
-                });
-            }
-
-            if (siteId) {
-                result = result.then(function (items) {
-                    return _.where(items, { siteId: siteId });
-                });
-            }
-
-            return result;
-        }
 
         function getCheckout(id) {
             id = parseInt(id, 10);
             var cached = checkoutDetailsCache.get(id),
                 checkout;
-
             if (cached) {
                 checkout = $q.when(cached);
             } else {
@@ -161,7 +163,8 @@
                             categoriesCache.put(rootCategoryId, cats);
                             return cats;
                         });
-                    return categoriesPromise.then(function (categories) {
+                     return categoriesPromise.then(function (categories) {
+                         
                         return {
                             checkout: checkout, categories: _.map(categories.results, mapCategory)
                         };

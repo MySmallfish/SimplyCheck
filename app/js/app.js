@@ -111,6 +111,7 @@
         textResource.load("he-IL", {
             "Edit": "עריכה",
             "Incidents": "ליקויים",
+            "NoIncidents": "אין ליקויים",
             "OrderBy": "מיין לפי",
             "header": "מיקום",
             "date": "תאריך",
@@ -122,7 +123,7 @@
             "Back": "חזרה",
             "NewIncident": "הוספת ממצא",
             "EditIncident": "עריכת ממצא",
-            "Invalid": "לא תקין",
+            "Invalid": "הוסף ליקוי",
             "Checkouts": "מבדקים",
             "CheckoutDetails": "ביצוע מבדק",
             "TypeToSearch": "הקלד מילות מפתח לחיפוש...",
@@ -150,7 +151,7 @@
             "MobileServicesAddress":"כתובת Mobile Services",
             "Save":"שמור",
             "AuthenticationFailed": "שם המשתמש או הסיסמה שגויים או שאינך רשום",
-            "PermitEffectiveDate": "תאריך האישור",
+            "PermitEffectiveDate": "תאריך",
             "SimplyCheck": "מבדק בטיחות",
             "FilteredForSite":"מבדקים לאתר:"
         });
@@ -171,6 +172,7 @@
                         serviceName: serverAddress
                     })
                     this.manager = new breeze.EntityManager(serverAddress);
+                    this.manager.fetchMetadata();
                 }
                 var self = this;
                 $rootScope.$on("Simple.ConfigurationChanged", function () {
