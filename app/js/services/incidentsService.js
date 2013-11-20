@@ -162,15 +162,16 @@
         }
 
         function sendIncident(incident) {
-            //if (incident == null) {
-            //    var d = $q.defer();
-            //    d.reject("Incident is null");
-            //    return d.promise;
-            //}
-            //var incidents = zumoClient.getTable("Incidents");
-            //incident = mapIncident(incident);
-            //console.log("INSERTING", incident);
-            //return $q.when(incidents.insert(incident));
+            if (incident == null) {
+                var d = $q.defer();
+                d.reject("Incident is null");
+                return d.promise;
+            }
+            var incidents = zumoClient.getTable("Incidents");
+            incident = mapIncident(incident);
+            console.log("INSERTING", incident);
+            return $q.when(incidents.insert(incident));
+
             var result = $q.defer();
 
             result.resolve(incident);
@@ -219,7 +220,8 @@
             getNewIncidentDetails: getNewIncidentDetails,
             save: save,
             validate: validate,
-            sendUpdates: sendUpdates
+            sendUpdates: sendUpdates,
+            sendIncident: sendIncident
         };
     };
     
