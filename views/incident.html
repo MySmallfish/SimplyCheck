@@ -1,6 +1,6 @@
 ﻿<form name="Incident" novalidate>
     <div class="main-area">
-        
+
         <div class="row-fluid">
             <div class="span6">
                 <h3>{{ "Severity" | l10n }}</h3>
@@ -27,20 +27,26 @@
                     </div>
                     <div>
                         <label for="IncidentHandlingTarget">{{ "HandlingTarget" | l10n}}</label>
-                        <select name="IncidentHandlingTarget" ng-model="incident.HandlingTarget" ng-options="target.Name for target in targets">
-                            <option value="">{{"SelectHandlingTarget" | l10n }}</option>
-                        </select>
+                        <div class="control-group">
+                            <select name=" incidenthandlingtarget" ng-model="incident.HandlingTarget" ng-options="target.Name for target in targets">
+                                <option value="">{{"SelectHandlingTarget" | l10n }}</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
         <div>
             <h3>{{"IncidentDescription"|l10n}}</h3>
-            <textarea name="IncidentDescription" ng-model="incident.Description" required autofocus></textarea>
+            <div class="textWrapper">
+                <textarea name="IncidentDescription" ng-model="incident.Description" required autofocus></textarea>
+            </div>
         </div>
         <div>
             <h3>{{"IncidentRemarks"|l10n}}</h3>
-            <textarea name="IncidentRemarks" ng-model="incident.Remarks"></textarea>
+            <div class="textWrapper">
+                <textarea name="IncidentRemarks" ng-model="incident.Remarks"></textarea>
+            </div>
         </div>
     </div>
     <div class="side-bar">

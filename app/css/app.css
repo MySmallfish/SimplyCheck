@@ -694,7 +694,6 @@ input[type=url] {
     width: 140px;
     border-radius: 0;
     box-shadow: none;
-    margin-top: 2px;
 }
 
 
@@ -776,6 +775,52 @@ select {
 
     ul.checklist.halfs li{
         float:none;
+        width:auto;
+    }
+
+    .main-area,    
+    .side-bar {
+        width:100%;
+        float:none;
+        clear:both;
+        position:relative;
+        top:auto;
+        left:auto;
+        
+    }
+
+    textarea{
+        width: 100%;
+        
+    }
+    .textWrapper{
+        width:auto;
+        margin:8px;
+    }
+
+    .severity{
+        width: 32px;
+        height:32px;
+        line-height: 32px;
+        margin:2px;
+    }
+    .severity.selected{
+        margin:0;
+        border-width: 2px;
+    }
+    .inner-button {
+        font-size:16px;
+    }
+    .attachments .attachment, .attachments .attachment img {
+        width:48px;
+        height:48px;
+    }
+    
+}
+@media(max-width:320px) {
+    .row-fluid [class*="span"] {
+        float: none;
+        clear: both;
         width:auto;
     }
 }
