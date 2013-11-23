@@ -10,12 +10,12 @@
 <ul>
     <li ng-repeat="item in checkout.Items"
         ng-class="{ 'collapsed': item.Collapsed}">
-        <h3 ng-click="item.toggleCollapsed()">{{item.Name}}</h3>
+        <h3 ng-click="item.toggleCollapsed()"><i class="fa" ng-class="{ 'fa-plus': item.Collapsed, 'fa-minus': !item.Collapsed}"></i>{{item.Name}}</h3>
         <div class="children">
             <ul>
                 <li ng-repeat="childItem in item.Items"
                     ng-class="{ 'collapsed': childItem.Collapsed}">
-                    <h4 ng-click="childItem.toggleCollapsed()">{{childItem.Name}}</h4>
+                    <h4 ng-click="childItem.toggleCollapsed()"><i class="fa" ng-class="{ 'fa-plus': childItem.Collapsed, 'fa-minus': !childItem.Collapsed}"></i>{{childItem.Name}}</h4>
                     <div class="children">
                         <ul>
                             <li ng-repeat="child in childItem.Items | filter:search"
@@ -23,7 +23,7 @@
                                 ng-class="{ 'checkout-category':true, 'valid': child.Valid == true, 'invalid': child.Valid == false, 'collapsed':child.Collapsed }">
 
                                 <div class="bullet" ng-click="child.toggleCollapsed()">
-                                    {{child.Name}}
+                                    <i class="fa" ng-class="{ 'fa-plus': child.Collapsed, 'fa-minus': !child.Collapsed}" ></i> {{child.Name}}
                                 </div>
                                 <div class="text">{{child.Text}}</div>
                                 <!--
@@ -39,7 +39,7 @@
                                     </div>
                                     <div class="incidents-items" ng-show="child.Incidents.length">
                                         <ul>
-                                            <li ng-repeat="incident in child.Incidents track by incident.UniqueId | orderBy:'Severity.Name'">
+                                            <li ng-repeat="incident in child.Incidents |orderBy:'Severity.Name' track by incident.UniqueId">
                                                 <span class="severity-hint" ng-style="{ 'background-color': incident.Severity.Color }">{{ incident.Severity.Name }}</span>
                                                 {{ incident.Description }}
                                                 <div class="button edit-checkout-item" ng-click="navigateToIncident(child, incident.Id);">{{"Edit"|l10n}}</div>

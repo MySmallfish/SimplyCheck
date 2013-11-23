@@ -96,12 +96,19 @@
         }
 
         function assignIncidents(map, incidents) {
-            _.each(incidents, function (incident) {
-                var category = map[incident.Category.Id];
-                if (category) {
-                    category.Incidents = category.Incidents || [];
-                    category.Incidents.push(incident);                   
-                }
+            incidentsService.getSeverities().then(function (severities) {
+
+                _.each(incidents, function (incident) {
+                    var category = map[incident.Category.Id];
+                    if (category) {
+                        category.Incidents = category.Incidents || [];
+                        category.Incidents.push(incident);
+                    }
+                    var severityId = incident.Severity.Id;
+                    
+                    incident.Severity = _.find(severities, function (s) { return s.Id == severityId; });
+                    
+                });
             });
         }
 
@@ -135,7 +142,15 @@
             });
             return root;
         }
-
+        function getCheckoutSiteId(checkoutId) {
+            
+            var cached = checkoutDetailsCache.get(checkoutId);
+            
+            if (!cached) {
+                throw Error("The checkout has not been loaded.");
+            }
+            return cached.LocationEntityId;
+        }
 
         function getCheckout(id) {
             id = parseInt(id, 10);
@@ -174,7 +189,7 @@
                 }
             }), incidentsService.getCheckoutIncidents(id)]).then(function (results) {
                 var checkout = results[0].checkout, items = results[0].categories, incidents = results[1];
-
+                
                 var result = prepareCheckoutViewModel(items, checkout, incidents);
                 return result;
             });
@@ -184,7 +199,8 @@
         return {
             getCheckouts: getCheckouts,
             getCheckout: getCheckout,
-            clearCache: clearCache
+            clearCache: clearCache,
+            getCheckoutSiteId: getCheckoutSiteId
         };
     };
 

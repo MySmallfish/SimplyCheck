@@ -1,7 +1,7 @@
 ﻿(function (S, SL) {
 
     SL.IncidentsService = function ($q, utils, entityManager, queueManager, zumoClient, $cacheFactory) {
-        var incidentsCache = $cacheFactory("incidents");
+        var incidentsCache = $cacheFactory("incidents"), referenceCache = $cacheFactory("reference");
 
         function getEventsQuery() {
             return breeze.EntityQuery.from("Event");
@@ -46,10 +46,38 @@
             return query;
         }
 
-        function getItems(query, mapFunction) {
-            return $q.when(entityManager.get().executeQuery(query)).then(function (result) {
-                return _.map(result.results, mapFunction);
+        function getSeverity(id) {
+            return getItem("severities", function (severity) {
+                return severity.Id == id;
             });
+        }
+
+        function getHandlingTarget(id) {
+            return getItem("handlingTargets", function (handlingTarget) {
+                return handlingTarget.Id == id;
+            });
+        }
+
+        function getItem(cacheKey, predicate) {
+            var cached = referenceCache.get(cacheKey), item;
+            
+            if (cached) {
+                item = _.find(cached, predicate);
+            }
+            return item;
+        }
+
+        function getItems(query, mapFunction, cacheKey) {
+            var cached = referenceCache.get(cacheKey);
+            if (cached) {
+                return $q.when(cached);
+            } else {
+                return $q.when(entityManager.get().executeQuery(query)).then(function (result) {
+                    var items = _.map(result.results, mapFunction);
+                    referenceCache.put(cacheKey, items);
+                    return items;
+                });
+            }
         }
                 
         function getCheckoutIncidentsFromServer(checkoutId) {
@@ -60,21 +88,25 @@
                                         .orderByDesc("StartTime");
             return $q.when(entityManager.get().executeQuery(query)).then(function (queryResults) {
                 var incidents = queryResults.results;
+                
                 return _.map(incidents, function (incident) {
                     var result = {
                         Id: incident.Id,
+                        UniqueId: incident.Id,
+                        ParentEventId: checkoutId,
                         Severity: {
                             Id: incident.Severity,
                             Name: incident.Name
                         },
                         Description: incident.Description,
-                        DueDate: incident.DueDate,
+                        DueTime: incident.DueTime,
                         Remarks: incident.Remarks,
                         Category: {
                             Id: incident.CategoryId,
                             Name: incident.CategoryFullName
                         }
                     };
+                    pushIncidentToCache(result);
                     return result;
                 });
             });
@@ -89,22 +121,25 @@
         }
 
         function getHandlingTargets() {
-            return getItems(getHandlingTargetQuery(), mapHandlingTarget);
+            return getItems(getHandlingTargetQuery(), mapHandlingTarget, "handlingTargets");
         }
 
        
         function getSeverities() {
-            return getItems(getSeverityQuery(), mapSeverity);
+            return getItems(getSeverityQuery(), mapSeverity, "severities");
         }
 
-        function getNewIncidentDetails(checkoutId, categoryId) {
+        function getNewIncidentDetails(checkoutId, categoryId, siteId) {
             var incidentDetails = {
                 Id: 0,
                 UniqueId: utils.guid.create(),
                 Category: {
                     Id: categoryId
                 },
-                ParentId: checkoutId
+                ParentEventId: checkoutId,
+                StartTime: new Date(),
+                LocationType: "Site",
+                LocationId: siteId
             };
 
             var defer = $q.defer();
@@ -121,7 +156,7 @@
                     Name: "2",
                     Color: "#FF0000"
                 },
-                DueDate: new Date(),
+                DueTime: new Date(),
                 Description: "תקלה",
                 Remarks: "פעולה",
                 HandlingTarget: {
@@ -145,13 +180,14 @@
         }
         
         function mapIncident(incident) {
+            var mapped = _.clone(incident);
             if (incident.Id == 0) {
                 delete incident.Id;
             }
             incident.CategoryId = incident.Category.Id;
             incident.SeverityId = incident.Severity.Id;
             if (incident.HandlingTarget) {
-                incident.HandlingTargetId = incident.HandlingTarget.Id;
+                incident.HandlingTargetId = parseInt(incident.HandlingTarget.Id, 10);
             }
 
             delete incident.Category;
@@ -196,10 +232,11 @@
         }
 
         function pushIncidentToCache(incident) {
-            var cachedIncidents = incidentsCache.get(incident.ParentId);
+            
+            var cachedIncidents = incidentsCache.get(incident.ParentEventId);
             if (!cachedIncidents) {
                 cachedIncidents = [];
-                incidentsCache.put(incident.ParentId, cachedIncidents);
+                incidentsCache.put(incident.ParentEventId, cachedIncidents);
             }
 
             cachedIncidents.push(incident);
@@ -221,7 +258,9 @@
             save: save,
             validate: validate,
             sendUpdates: sendUpdates,
-            sendIncident: sendIncident
+            sendIncident: sendIncident,
+            getSeverity: getSeverity,
+            getHandlingTarget: getHandlingTarget
         };
     };
     

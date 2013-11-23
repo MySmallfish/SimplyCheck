@@ -1,5 +1,5 @@
-(function(S, SL) {
-    SL.LoginController = function ($q, $scope, loginManager, queueManager, network, networkManager, $log, textResource, incidentsService, utils) {
+﻿(function(S, SL) {
+    SL.LoginController = function ($q, $scope, loginManager, queueManager, network, networkManager, $log, textResource, incidentsService, utils, $filter) {
         $scope.changeHeader(textResource.get("SimplyCheck"));
         $scope.Username = "mysmallfish@gmail.com";
         $scope.Password = "1234";
@@ -21,26 +21,31 @@
             updateNetworkStatus();
         });
 
+
         updateNetworkStatus();
         $scope.login = function () {
 
-            var incident = {
-                Id: 0,
-                Severity: {
-                    Id: 1,
-                    Name: "1"
-                },
-                UniqueId: utils.guid.create(),
-                Description: "This is a description",
-                DueDate: new Date(),
-                Remarks: "Remarks",
-                Category: {
-                    Id: 1,
-                    Name: "Some Category"
-                }
-            }
-            incidentsService.sendIncident(incident)
-            return;
+            //var incident = {
+            //    Id: 0,
+            //    Severity: {
+            //        Id: 1,
+            //        Name: "1"
+            //    },
+            //    StartTime: new Date(),
+            //    ParentEventId:388,
+            //    UniqueId: utils.guid.create(),
+            //    Description: "תקלה רצינית",
+            //    DueTime: new Date(),
+            //    Remarks: "Remarks",
+            //    LocationId: 5,
+            //    LocationType: "Site",
+            //    Category: {
+            //        Id: 17,
+            //        Name: "Some Category"
+            //    }
+            //}
+            //incidentsService.sendIncident(incident)
+            //return;
 
             $scope.$emit("progress-started");
             var authResult = loginManager.authenticate($scope.Username, $scope.Password);

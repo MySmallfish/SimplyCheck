@@ -825,3 +825,16 @@ select {
         width:auto;
     }
 }
+
+.checkout i.fa-plus,
+.checkout i.fa-minus{
+    color: blue;
+    font-size: 14px;
+    margin-right: 8px;
+}
+
+.checkout i.fa-plus,
+.checkout i.fa-minus {
+    margin-left: 8px;
+    margin-right: 0px;
+}

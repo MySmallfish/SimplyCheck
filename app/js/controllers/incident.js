@@ -1,8 +1,9 @@
 ﻿(function (S, SL) {
 
-    SL.IncidentController = function ($q, $scope, $routeParams, $route, incidentsService, camera, attachmentsManager, textResource, navigate) {
+    SL.IncidentController = function ($q, $scope, $routeParams, $route, incidentsService, checkoutService, camera, attachmentsManager, textResource, navigate) {
         $scope.categoryId = parseInt($routeParams.categoryId, 10);
         $scope.checkoutId = parseInt($routeParams.checkoutId, 10);
+        var siteId = checkoutService.getCheckoutSiteId($scope.checkoutId);
 
         if ($routeParams.id) {
             $scope.uniqueId = $routeParams.uniqueId;
@@ -69,7 +70,7 @@
         if ($scope.uniqueId) {
             incidentDetails = incidentsService.getIncidentDetails($scope.uniqueId);
         } else {
-            incidentDetails = incidentsService.getNewIncidentDetails($scope.checkoutId, $scope.categoryId);
+            incidentDetails = incidentsService.getNewIncidentDetails($scope.checkoutId, $scope.categoryId, siteId);
         }
 
         incidentDetails.then(function (details) {
