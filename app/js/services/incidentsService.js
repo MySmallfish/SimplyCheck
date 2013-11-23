@@ -147,33 +147,18 @@
             return defer.promise;
         }
 
-        function getIncidentDetails(id) {
-            var incidentDetails = {
-                Id: 1,
-                collapsed: true,
-                Severity: {
-                    Id: 1,
-                    Name: "2",
-                    Color: "#FF0000"
-                },
-                DueTime: new Date(),
-                Description: "תקלה",
-                Remarks: "פעולה",
-                HandlingTarget: {
-                    Id: 1,
-                    Name: "מחלקת התברואה"
-                },
-                Attachments: [
-                    { Index: 1, Url: "https://bt.ylm.co.il/Download.ashx?p=Attachments/Event/386/image[72ec29c9-ff32-4762-96d8-4180d1806663].jpg" },
-                    { Index: 2, Url: "https://bt.ylm.co.il/Download.ashx?p=Attachments/Event/386/image[72ec29c9-ff32-4762-96d8-4180d1806663].jpg" },
-                    { Index: 3, Url: "https://bt.ylm.co.il/Download.ashx?p=Attachments/Event/386/image[72ec29c9-ff32-4762-96d8-4180d1806663].jpg" },
-                    { Index: 4, Url: "https://bt.ylm.co.il/Download.ashx?p=Attachments/Event/386/image[72ec29c9-ff32-4762-96d8-4180d1806663].jpg" }
-                ]
-            };
-            
-            var defer = $q.defer();
-            defer.resolve(incidentDetails);
-            return defer.promise;
+        function getIncidentFromCache(checkoutId, uniqueId) {
+            var cachedIncidents = incidentsCache.get(checkoutId);
+            if (!cachedIncidents) {
+                throw Error("Incidents not loaded!");
+            }
+
+            var incident = _.find(cachedIncidents, function (i) { return i.UniqueId == uniqueId; });
+            return incident;
+        }
+
+        function getIncidentDetails(checkoutId, uniqueId) {
+            return $q.when(getIncidentFromCache(checkoutId, uniqueId));
         }
         function sendUpdates() {
             return runSaveQueue();
@@ -205,7 +190,7 @@
             }
             var incidents = zumoClient.getTable("Incidents");
             incident = mapIncident(incident);
-            console.log("INSERTING", incident);
+            
             return $q.when(incidents.insert(incident));
 
             var result = $q.defer();
@@ -238,8 +223,21 @@
                 cachedIncidents = [];
                 incidentsCache.put(incident.ParentEventId, cachedIncidents);
             }
+            
+            var existingIncidentIndex = -1;
+            _.each(cachedIncidents, function (i, index) {
+                if (i.UniqueId == incident.UniqueId) {
+                    existingIncidentIndex = index;
+                }
+            });
+
+            if (existingIncidentIndex >= 0) {
+                cachedIncidents.splice(existingIncidentIndex, 1);
+            } 
 
             cachedIncidents.push(incident);
+            
+            
             return incident;
         }
         function save(incident) {

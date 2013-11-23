@@ -285,4 +285,33 @@
     //var defer = $q.defer();
     //defer.resolve(items);
     //return defer.promise;
+
+
+    //var incidentDetails = {
+    //    Id: 1,
+    //    collapsed: true,
+    //    Severity: {
+    //        Id: 1,
+    //        Name: "2",
+    //        Color: "#FF0000"
+    //    },
+    //    DueTime: new Date(),
+    //    Description: "תקלה",
+    //    Remarks: "פעולה",
+    //    HandlingTarget: {
+    //        Id: 1,
+    //        Name: "מחלקת התברואה"
+    //    },
+    //    Attachments: [
+    //        { Index: 1, Url: "https://bt.ylm.co.il/Download.ashx?p=Attachments/Event/386/image[72ec29c9-ff32-4762-96d8-4180d1806663].jpg" },
+    //        { Index: 2, Url: "https://bt.ylm.co.il/Download.ashx?p=Attachments/Event/386/image[72ec29c9-ff32-4762-96d8-4180d1806663].jpg" },
+    //        { Index: 3, Url: "https://bt.ylm.co.il/Download.ashx?p=Attachments/Event/386/image[72ec29c9-ff32-4762-96d8-4180d1806663].jpg" },
+    //        { Index: 4, Url: "https://bt.ylm.co.il/Download.ashx?p=Attachments/Event/386/image[72ec29c9-ff32-4762-96d8-4180d1806663].jpg" }
+    //    ]
+    //};
+
+    //var defer = $q.defer();
+    //defer.resolve(incidentDetails);
+    //return defer.promise;
+
 })(Simple, SimplyLog);

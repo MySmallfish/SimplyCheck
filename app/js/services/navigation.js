@@ -8,6 +8,7 @@
                 .when("/Incident/:checkoutId/:categoryId", { templateUrl: "views/incident.html", controller: "IncidentCtrl" })
                 .when("/Incident/:checkoutId/:categoryId/:uniqueId", { templateUrl: "views/incident.html", controller: "IncidentCtrl" })
                 .when("/Checkout/:id", { templateUrl: "views/checkout.html", controller: "CheckoutCtrl" })
+                .when("/Checkout/:id/:categoryId", { templateUrl: "views/checkout.html", controller: "CheckoutCtrl" })
                 .when("/NewCheckout", { templateUrl: "views/new-checkout.html", controller: "NewCheckoutCtrl" })
                 .when("/SitePermits/:checkoutId/:siteId", { templateUrl: "views/site-permits.html", controller: "SitePermitsCtrl" })
                 .when("/Configuration", { templateUrl: "views/configuration.html", controller: "ConfigurationCtrl", resolve: { pageInfo: function () { return { configuration:false,  back: true, logout: false, home: false }; } } })
@@ -46,12 +47,20 @@
             return $location.path(path);
         }
 
+        function checkout(checkoutId, categoryId) {
+            var path = "Checkout/" + String(checkoutId);
+            if (categoryId) {
+                path += "/" + String(categoryId);
+            }
+            return $location.path(path);
+        }
         return {
             newIncident: newIncident,
             incident: incident,
             sitePermits: sitePermits,
             back: back,
-            configuration: configuration
+            configuration: configuration,
+            checkout: checkout
         }
 
     };

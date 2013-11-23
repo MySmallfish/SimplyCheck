@@ -1,11 +1,17 @@
 ﻿(function (S, SL) {
 
-    SL.CheckoutController = function ($scope, $routeParams, navigate, checkoutService, textResource) {
+    SL.CheckoutController = function ($scope, $routeParams, navigate, checkoutService, textResource, stateManager, $anchorScroll, $location) {
         $scope.changeHeader(textResource.get("Checkout"));
         $scope.id = $routeParams.id;
-        
+
+        stateManager.register($scope, $scope.id, "search");
+
+        if ($routeParams.categoryId) {
+            $location.hash("_category_" + $routeParams.categoryId);
+            $anchorScroll();
+        }
+
         $scope.navigateToIncident = function (item, uniqueId) {
-            
             navigate.incident($scope.id, item.Id, uniqueId);
         };
         $scope.markAsValid = function(item) {
