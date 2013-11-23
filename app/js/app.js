@@ -34,7 +34,7 @@
 
     simplyLogModule.config(function (configurationManagerProvider) {
         configurationManagerProvider.configure({
-            "Api.Address": "http://localhost:49712/odata/",
+            "Api.Address": "http://simplylogapi.ylm.co.il/odata/",
             "Zumo.Address": "https://simplycheck.azure-mobile.net/"            
         });
     });
