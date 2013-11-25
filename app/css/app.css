@@ -20,6 +20,12 @@ html[xmlns] .clearfix {
     height: 1%;
 }
 
+body {
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
 body, textarea {
     margin: 0;
     padding: 0;
@@ -50,8 +56,7 @@ button {
     border: none;
 }
 
-.checkout-item,
-.site {
+.checkout-item {
     display: inline-block;
     background-color: #E5E5E5;
     width: 8em;
@@ -62,7 +67,19 @@ button {
 }
 
 .site {
+    width: auto;
+    margin: 0.5em;
+    padding: 0.5em;
+    cursor: pointer;
+    position: relative;
+    background-color: #E5E5E5;
     border: solid 4px transparent;
+    width: 25%;
+    float: left;
+}
+
+.rtl .site {
+    float: right;
 }
 
 .checkout-item {
@@ -220,11 +237,12 @@ div.sort {
     margin-bottom: 1px;
 }
 
-.checkout .incidents ul li .button{
-    background-color: transparent;
-    color:blue;
-    margin:0;
-}
+    .checkout .incidents ul li .button {
+        background-color: transparent;
+        color: blue;
+        margin: 0;
+    }
+
 .checkout .bullet {
     font-weight: bold;
     float: left;
@@ -356,23 +374,26 @@ a.button:hover {
 .incidents-items {
     height: 5em;
     overflow: auto;
-    background-color:white;
-    margin:4px;
+    background-color: white;
+    margin: 4px;
 }
 
 .severities {
     clear: both;
 }
+
 .severity-hint,
-.severity{
+.severity {
     text-align: center;
     display: inline-block;
     color: white;
 }
-.severity-hint{
-    padding-left:4px;
-    padding-right:4px;
+
+.severity-hint {
+    padding-left: 4px;
+    padding-right: 4px;
 }
+
 .severity {
     width: 48px;
     height: 48px;
@@ -393,7 +414,6 @@ a.button:hover {
 textarea,
 textarea:focus {
     width: 100%;
-    min-height: 10em;
     resize: none;
     outline: none;
 }
@@ -403,6 +423,28 @@ textarea:focus {
     height: 80px;
     margin: 8px;
     float: right;
+    position: relative;
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
+}
+
+.delete-confirm {
+    display: none;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-color: white;
+    color: red;
+    text-align: center;
+    font-size: 45px;
+    opacity: .7;
+    line-height: 92px;
+}
+
+.delete-in-progress .delete-confirm {
+    display: block;
 }
 
 .add-attachment {
@@ -417,6 +459,9 @@ textarea:focus {
 .attachment img {
     width: 80px;
     height: 80px;
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 .main-area {
@@ -476,8 +521,8 @@ ul.checklist {
     padding: 0;
     margin: 0;
     padding-left: 56px;
-    clear:both;
-    zoom:1;
+    clear: both;
+    zoom: 1;
 }
 
 
@@ -516,30 +561,37 @@ ul.checklist li {
     ul.checklist li .text {
         font-size: 16pt;
     }
-    ul.checklist li label{
-        width:auto;
-        
+
+    ul.checklist li label {
+        width: auto;
     }
-    ul.checklist li .control-group{
-        display:inline-block;
+
+    ul.checklist li .control-group {
+        display: inline-block;
     }
-    ul.checklist li input[type=text]{
-        width:80px;
+
+    ul.checklist li input[type=text] {
+        width: 80px;
     }
-    ul.checklist.halfs li{
-    display:block;
-    width:40%;
-    float:left;
-    clear:none;
-    overflow:auto;
-    margin:4px;
+
+ul.checklist.halfs li {
+    display: block;
+    width: 40%;
+    float: left;
+    clear: none;
+    overflow: auto;
+    margin: 4px;
 }
-.rtl ul.checklist.halfs li{
-    float:right;
+
+.rtl ul.checklist.halfs li {
+    float: right;
 }
+
 .attachments {
     float: right;
     margin-left: 8px;
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
 }
 
 .rtl .attachments {
@@ -646,9 +698,13 @@ header {
 
 header .title {
     font-size: 2em;
-    margin-right: 3em;
+    margin-right: 2em;
     line-height: 2em;
 }
+
+    header .title.short {
+        margin-right: 0.3em;
+    }
 
 .header-button {
     margin-left: 8px;
@@ -756,10 +812,11 @@ select {
         margin: 0;
     }
 
-    .large-button {
+    .checkout .large-button {
         padding: 4px;
         font-size: 10pt;
     }
+
 
     .checkout .button {
         width: 80px;
@@ -774,60 +831,85 @@ select {
         padding: 0.3em;
     }
 
-    ul.checklist.halfs li{
-        float:none;
-        width:auto;
+
+    ul.checklist.halfs li {
+        float: none;
+        width: auto;
     }
 
-    .main-area,    
+    .main-area,
     .side-bar {
-        width:100%;
-        float:none;
-        clear:both;
-        position:relative;
-        top:auto;
-        left:auto;
-        
-    }
-
-    textarea{
         width: 100%;
-        
-    }
-    .textWrapper{
-        width:auto;
-        margin:8px;
+        float: none;
+        clear: both;
+        position: relative;
+        top: auto;
+        left: auto;
     }
 
-    .severity{
+    textarea {
+        width: 100%;
+        font-size: 140%;
+        height: 4em;
+    }
+
+    .textWrapper {
+        width: auto;
+        margin: 8px;
+    }
+
+    .severity {
         width: 32px;
-        height:32px;
+        height: 32px;
         line-height: 32px;
-        margin:2px;
+        margin: 2px;
     }
-    .severity.selected{
-        margin:0;
-        border-width: 2px;
+
+        .severity.selected {
+            margin: 0;
+            border-width: 2px;
+        }
+
+    .attachments, .rtl .attachments {
+        float: none;
+        clear: both;
     }
-    .inner-button {
-        font-size:16px;
+
+        .attachments .attachment {
+            width: auto;
+            float: none;
+            clear: both;
+            text-align: center;
+        }
+
+        .attachments .add-attachment {
+            width: 92px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .attachments .attachment img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+    .site {
+        float: none;
+        clear: both;
     }
-    .attachments .attachment, .attachments .attachment img {
-        width:48px;
-        height:48px;
-    }
-    
 }
+
 @media(max-width:320px) {
     .row-fluid [class*="span"] {
         float: none;
         clear: both;
-        width:auto;
+        text-align: center;
+        width: auto;
     }
 }
 
 .checkout i.fa-plus,
-.checkout i.fa-minus{
+.checkout i.fa-minus {
     color: blue;
     font-size: 14px;
     margin-right: 8px;
@@ -839,6 +921,10 @@ select {
     margin-right: 0px;
 }
 
-.checkout a {
-color:inherit;
+.checkout a,
+.checkout a:hover,
+.checkout a:active,
+.checkout a:visited {
+    color: inherit;
+    text-decoration: none;
 }

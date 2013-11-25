@@ -1,10 +1,12 @@
 ﻿(function (S, SL) {
     
-    SL.HomeController = function ($scope, checkoutService, loginManager, $location, textResource) {
+    SL.HomeController = function ($scope, checkoutService, loginManager, $location, textResource, navigate) {
         $scope.changeHeader(textResource.get("Checkouts"));
         $scope.orderBy = "header";
         $scope.selectedSiteId = null;
         $scope.selectedSiteName = null;
+
+        
         var employeeId = 0;
         function loadCheckouts() {
             $scope.$emit("progress-started");
@@ -56,27 +58,30 @@
             loadCheckouts();
         });
 
-        $scope.clearSiteFilter = function () {
+        $scope.clearSiteFilter = function() {
             $scope.selectedSiteId = null;
             $scope.selectedSiteName = null;
             loadCheckouts();
-        }
-
+        };  
         
 
-        $scope.select = function (item) {
+        $scope.select = function(item) {
             if (item.id) {
-                $location.path("/Checkout/" + item.id);
+                navigate.checkout(item.id);
             } else {
                 $scope.selectedSiteId = item.siteId;
                 $scope.selectedSiteName = item.header;
                 loadCheckouts();
             }
-        }
+        };
+        
+        $scope.newCheckout = function () {
+            navigate.newCheckout();
+        };
 
         $scope.logout = function() {
             loginManager.logout().then(function() {
-                $location.path("Login");
+                navigate.login();
             });
         };
     };

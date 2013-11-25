@@ -1,6 +1,6 @@
 ﻿(function (S, SL) {
 
-    SL.CheckoutService = function ($q, incidentsService, entityManager, $cacheFactory) {
+    SL.CheckoutService = function ($q, incidentsService, entityManager, $cacheFactory, locationsService, utils) {
         var checkoutsCache = $cacheFactory("checkouts"),
             checkoutDetailsCache = $cacheFactory("checkoutDetails", { capacity: 50 }),
             categoriesCache = $cacheFactory("categories");
@@ -152,14 +152,53 @@
             return cached.LocationEntityId;
         }
 
+        function getCheckoutCategories(rootCategoryId) {
+            var categoriesQuery = breeze.EntityQuery.from("Category").where("RootId", "equals", rootCategoryId),
+                cachedCategories = categoriesCache.get(rootCategoryId);
+
+            var categoriesPromise = cachedCategories ? $q.when(cachedCategories) : $q.when(entityManager.get().executeQuery(categoriesQuery)).then(function (cats) {
+                categoriesCache.put(rootCategoryId, cats);
+                return cats;
+            });
+
+            return categoriesPromise;
+        }
+
+        function createNewCheckout(rootCategoryId, siteId) {
+            var checkout = {
+                Id: utils.guid.create(),
+                CategoryId: rootCategoryId,
+                StartTime: new Date(),
+                Status: 1,
+                EventCategoryName: "מבדק בטיחות"// SHOULD BE CategoryName
+                // SeverityId ? (should be default)
+            };
+            checkout.Description = checkout.EventCategoryName;
+            
+            return locationsService.getSite(siteId).then(function (site) {
+                checkout.LocationEntityId = site;
+                checkout.LocationEntityType = "Site";
+                checkout.LocationFullName = checkout.LocationLevel1 = site.Name;
+
+                checkoutDetailsCache.put(checkout.Id, checkout);
+                // SEND TO SERVER
+
+                //return getCheckoutCategories(rootCategoryId).then(function (items) {
+                //    return prepareCheckoutViewModel(items, checkout);
+                //});
+
+                return checkout;
+            });
+        }
+
         function getCheckout(id) {
-            id = parseInt(id, 10);
+            //id = parseInt(id, 10);
             var cached = checkoutDetailsCache.get(id),
-                checkout;
+                checkoutPromise;
             if (cached) {
-                checkout = $q.when(cached);
+                checkoutPromise = $q.when(cached);
             } else {
-                checkout = $q.when(entityManager.get().fetchEntityByKey("Checkout", id, true)).then(function (item) {
+                checkoutPromise = $q.when(entityManager.get().fetchEntityByKey("Checkout", id, true)).then(function (item) {
                     item = item.entity;
                     if (item) {
                         checkoutDetailsCache.put(id, item);
@@ -167,18 +206,12 @@
                     return item;
                 });
             }
-            return $q.all([checkout.then(function (checkout) {
+            return $q.all([checkoutPromise.then(function (checkout) {
                 
                 if (checkout) {
                     var rootCategoryId = parseInt(checkout.CategoryId, 10);
-                    var categoriesQuery = breeze.EntityQuery.from("Category").where("RootId", "equals", rootCategoryId),
-                        cachedCategories = categoriesCache.get(rootCategoryId);
-                    
-                     var categoriesPromise = cachedCategories ? $q.when(cachedCategories) : $q.when(entityManager.get().executeQuery(categoriesQuery)).then(function (cats) {
-                            categoriesCache.put(rootCategoryId, cats);
-                            return cats;
-                        });
-                     return categoriesPromise.then(function (categories) {
+
+                    return getCheckoutCategories(rootCategoryId).then(function (categories) {
                          
                         return {
                             checkout: checkout, categories: _.map(categories.results, mapCategory)
@@ -188,9 +221,9 @@
                     return $q.when({});
                 }
             }), incidentsService.getCheckoutIncidents(id)]).then(function (results) {
-                var checkout = results[0].checkout, items = results[0].categories, incidents = results[1];
+                var checkoutItem = results[0].checkout, items = results[0].categories, incidents = results[1];
                 
-                var result = prepareCheckoutViewModel(items, checkout, incidents);
+                var result = prepareCheckoutViewModel(items, checkoutItem, incidents);
                 return result;
             });
 
@@ -200,7 +233,9 @@
             getCheckouts: getCheckouts,
             getCheckout: getCheckout,
             clearCache: clearCache,
-            getCheckoutSiteId: getCheckoutSiteId
+            getCheckoutSiteId: getCheckoutSiteId,
+            getCheckoutCategories: getCheckoutCategories,
+            createNewCheckout: createNewCheckout
         };
     };
 

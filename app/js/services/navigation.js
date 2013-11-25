@@ -46,7 +46,12 @@
 
             return $location.path(path);
         }
-
+        function newCheckout() {
+            $location.path("NewCheckout");
+        }
+        function login() {
+            $location.path("Login");
+        }
         function checkout(checkoutId, categoryId) {
             var path = "Checkout/" + String(checkoutId);
             if (categoryId) {
@@ -60,7 +65,9 @@
             sitePermits: sitePermits,
             back: back,
             configuration: configuration,
-            checkout: checkout
+            checkout: checkout,
+            login: login,
+            newCheckout: newCheckout
         }
 
     };

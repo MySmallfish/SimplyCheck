@@ -1,6 +1,6 @@
 ﻿(function (S, SL) {
 
-    SL.NewCheckoutController = function ($scope, locationsService, textResource) {
+    SL.NewCheckoutController = function ($scope, locationsService, textResource, checkoutService, navigate) {
         $scope.changeHeader(textResource.get("NewCheckout"));
         $scope.selectedSite = null;
         $scope.selectSite = function (site) {
@@ -11,14 +11,22 @@
             }
         };
         
-        $scope.startCheckout = function() {
-            location.href = "#/Checkout/1";
+        $scope.startCheckout = function () {
+            $scope.$emit("progress-started");
+            checkoutService.createNewCheckout(1, 7).then(function (checkout) {
+                navigate.checkout(checkout.Id);
+            }).finally(function () {
+                $scope.$emit("progress-completed");
+            });
         };
-
-        locationsService.getSites().then(function(sites) {
+        var employeeId = 1;
+        $scope.$emit("progress-started");
+        locationsService.getSites(employeeId).then(function (sites) {
             $scope.groups = _.groupBy(sites, function (site) {
                 return site.SiteGeoGroup.Name;
             });
+        }).finally(function () {
+            $scope.$emit("progress-completed");
         });
 
         

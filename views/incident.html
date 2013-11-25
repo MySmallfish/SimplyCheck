@@ -52,8 +52,11 @@
     <div class="side-bar">
         <h3>{{"Attachments"|l10n}}</h3>
         <div class="attachments">
-            <div class="attachment" ng-repeat="attachment in incident.Attachments">
+            <div class="attachment" ng-repeat="attachment in incident.Attachments" ng-swipe-left="isDeleting = true" ng-swipe-right="isDeleting=false" ng-class="{'delete-in-progress':isDeleting}">
                 <img ng-src="{{ attachment.Url }}" />
+                <div class="delete-confirm" ng-click="deleteAttachment(attachment)">
+                    <i class="fa fa-2x fa-times"></i>
+                </div>
             </div>
             <div class="attachment add-attachment" ng-hide="incident.Attachments.length >=5">
                 <div class="inner-button" ng-click="addFromCamera()"><i class="fa fa-camera"></i></div>

@@ -1,7 +1,8 @@
 ﻿(function (S, SL) {
 
-    SL.LocationsService = function ($q, queueManager, $http, configurationManager, $cacheFactory) {
-        var sitePermitsCache = $cacheFactory("sitePermits");
+    SL.LocationsService = function ($q, queueManager, $http, configurationManager, $cacheFactory, entityManager) {
+        var sitePermitsCache = $cacheFactory("sitePermits"),
+            sitesCache = $cacheFactory("sites");
 
         var permitsQueue = queueManager.get({
             name: "Permits",
@@ -74,7 +75,7 @@
                                 Name: item.PermitTypeName,
                                 DaysDuration: item.PermitTypeDaysDuration
                             }
-                        }
+                        };
                     });
                     sitePermitsCache.put(siteId, items);
                     return items;
@@ -82,55 +83,54 @@
             }
         }
 
+        function mapSite(site) {
+            var item = {
+                Id: site.Id,
+                Name: site.Name,
+                Address: site.Address
+            };
+            item.SiteGeoGroup = {
+                Id: site.SiteGeoGroupId,
+                Name: site.SiteGeoGroupName
+            };
+            delete item.SiteGeoGroupId;
+            delete item.SiteGeoGroupName;
+            return item;
+        }
+
+        function getSite(id) {
+            return $q.when(entityManager.get().fetchEntityByKey("Site", id, true)).then(function (site) {
+                site = site.entity;
+                return {
+                    Id: site.Id,
+                    Name: site.Name
+                };
+            });
+        }
+
         function getSites(employeeId) {
-            var items = [
-            {
-                Id: 1,
-                Name: "ביס 1",
-                SiteGeoGroup: {
-                    Id: 1,
-                    Name: "בתי ספר"
-                },
-                Address: "ילדי טהרן 6"
-            },
-            {
-                Id: 2,
-                Name: "ביס 2",
-                SiteGeoGroup: {
-                    Id: 1,
-                    Name: "בתי ספר"
-                },
-                Address: "צעירי בגדאד 12"
-            },
-            {
-                Id: 3,
-                Name: "גן 1",
-                SiteGeoGroup: {
-                    Id: 2,
-                    Name: "גני ילדים"
-                },
-                Address: "זקני תימן 142"
-            },
-            {
-                Id: 4,
-                Name: "מקלט 1",
-                SiteGeoGroup: {
-                    Id: 3,
-                    Name: "מקלטים"
-                },
-                Address: "בן טולילה 16"
-            },
-            ];
-            var defer = $q.defer();
-            defer.resolve(items);
-            return defer.promise;
+            var query = breeze.EntityQuery.from("Site");
+
+            var cachedSites = sitesCache.get(employeeId);
+            if (cachedSites) {
+                return $q.when(cachedSites);
+            } else {
+                return $q.when(entityManager.get().executeQuery(query)).then(function(data) {
+                    var sites = _.map(_.filter(data.results, function(s) {
+                        return s.Name && s.Name.length;
+                    }), mapSite);
+                    sitesCache.put(employeeId, sites);
+                    return sites;
+                });
+            }
         }
 
         return {
             getSites: getSites,
             getSitePermits: getSitePermits,
             saveSitePermits: saveSitePermits,
-            validateSitePermits: validateSitePermits
+            validateSitePermits: validateSitePermits,
+            getSite: getSite
         };
     };
 
