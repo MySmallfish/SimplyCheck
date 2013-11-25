@@ -23,6 +23,14 @@
             checkoutDetailsCache.removeAll();
             categoriesCache.removeAll();
         }
+
+        function addCheckoutToCache(checkout) {
+            var cache = checkoutsCache.get("checkouts") || [];
+            var mappedCheckout = mapCheckout(checkout);
+            cache.push(mappedCheckout);
+            
+        }
+
         function getCheckouts(employeeId, siteId) {
             var query = getCheckoutQuery();
             var result = null;
@@ -37,14 +45,13 @@
                     checkoutsCache.put("checkouts", items);
                     return items;
 
-                }, function (err) {
-                    console.error(err);
                 });
             }
 
             if (siteId) {
                 result = result.then(function (items) {
-                    return _.where(items, { siteId: siteId });
+                    console.log("FILTERING ", items, " BY ", siteId);
+                    return _.where(items, { siteId: parseInt(siteId, 10) });
                 });
             }
 
@@ -53,9 +60,9 @@
 
         function mapCheckout(item) {
             return {
-                id: parseInt(item.Id, 10),
+                id: item.Id,
                 header: item.LocationLevel1,
-                siteId: item.LocationEntityId,
+                siteId: parseInt(item.LocationEntityId, 10),
                 status: item.Status == 1 ? (item.ChildEvents > 0) ? 1 : 0 : 2,
                 count: item.ChildEvents,
                 open: item.OpenChildrenCount,
@@ -176,10 +183,11 @@
             checkout.Description = checkout.EventCategoryName;
             
             return locationsService.getSite(siteId).then(function (site) {
-                checkout.LocationEntityId = site;
+                checkout.LocationEntityId = site.Id;
                 checkout.LocationEntityType = "Site";
                 checkout.LocationFullName = checkout.LocationLevel1 = site.Name;
 
+                addCheckoutToCache(checkout);
                 checkoutDetailsCache.put(checkout.Id, checkout);
                 // SEND TO SERVER
 

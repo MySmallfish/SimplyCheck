@@ -893,9 +893,11 @@ select {
             max-height: 100%;
         }
 
-    .site {
+    .site,
+    .rtl .site {
         float: none;
         clear: both;
+        width: auto;
     }
 }
 
@@ -927,4 +929,8 @@ select {
 .checkout a:visited {
     color: inherit;
     text-decoration: none;
+}
+
+.siteGroupItems {
+    width: 100%;
 }

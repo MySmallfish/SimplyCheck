@@ -12,12 +12,14 @@
         };
         
         $scope.startCheckout = function () {
-            $scope.$emit("progress-started");
-            checkoutService.createNewCheckout(1, 7).then(function (checkout) {
-                navigate.checkout(checkout.Id);
-            }).finally(function () {
-                $scope.$emit("progress-completed");
-            });
+            if ($scope.selectedSite) {
+                $scope.$emit("progress-started");
+                checkoutService.createNewCheckout(1, $scope.selectedSite.Id).then(function (checkout) {
+                    navigate.checkout(checkout.Id);
+                }).finally(function() {
+                    $scope.$emit("progress-completed");
+                });
+            }
         };
         var employeeId = 1;
         $scope.$emit("progress-started");

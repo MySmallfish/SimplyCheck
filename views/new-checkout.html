@@ -1,16 +1,16 @@
-﻿<div class="controls top clearfix">
-    <div class="button large-button" ng-click="startCheckout()">{{ "StartCheckout" | l10n }}</div>
-</div>
+﻿<!--<div class="controls top clearfix">
+    <button class="button large-button" ng-click="startCheckout()" ng-disabled="!selectedSite">{{ "StartCheckout" | l10n }}</button>
+</div>-->
 <div class="filters">
     {{ "Search" | l10n }}:
     <input type="text" class="search" ng-model="search" placeholder="{{ 'TypeToSearch' | l10n }}" />
 </div>
 <div class="siteGroup" data-ng-repeat="(groupName, sites) in groups">
     <h3>{{groupName}}</h3>
-    <div class="clearfix">
+    <div class="siteGroupItems clearfix">
         <div ng-repeat="site in sites | filter:search"
              ng-class="{'site': true, 'has-checkout': site.HasCheckout, 'selected':site == selectedSite }"
-             ng-click="selectSite(site)">
+             ng-click="selectSite(site); startCheckout()">
             <div class="hd">{{ site.Name }}</div>
             <div class="text">{{ site.Address }}</div>
         </div>
