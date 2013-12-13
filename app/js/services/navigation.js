@@ -18,7 +18,7 @@
         return {
             configure: configure,
             $get: SL.NavigationService
-        }
+        };
     };
 
     SL.NavigationService = function ($location, $window) {
@@ -59,6 +59,7 @@
             }
             return $location.path(path);
         }
+
         return {
             newIncident: newIncident,
             incident: incident,
@@ -68,7 +69,7 @@
             checkout: checkout,
             login: login,
             newCheckout: newCheckout
-        }
+        };
 
     };
 })(Simple, SimplyLog);

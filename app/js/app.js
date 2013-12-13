@@ -6,6 +6,7 @@
 
     simplyLogModule.service("loginManager", SL.LoginManager);
     simplyLogModule.service("incidentsService", SL.IncidentsService);
+    simplyLogModule.service("checkoutQueueManager", SL.CheckoutQueueManager);
     simplyLogModule.service("checkoutService", SL.CheckoutService);
     simplyLogModule.service("locationsService", SL.LocationsService);
 
@@ -42,7 +43,7 @@
     simplyLogModule.service("zumoClient", function (configurationManager) {
         return new WindowsAzure.MobileServiceClient(configurationManager.get("Zumo.Address"), 'IeFmiqEZkDybLqTiFONABOFvmYLVRG94');
     });
-    simplyLogModule.run(function ($rootScope, $location, loginManager, navigate, incidentsService, network) {
+    simplyLogModule.run(function ($rootScope, $location, loginManager, navigate, incidentsService, network, checkoutService) {
         // register listener to watch route changes
         $rootScope.changeHeader = function (header) {
             $rootScope.header = header;
@@ -68,8 +69,9 @@
 
 
         $rootScope.refresh = function () {
-
+            checkoutService.sendUpdates();
             incidentsService.sendUpdates();
+
             $rootScope.$broadcast("SimplyLog.RefreshRequired");
         };
         $rootScope.logout = function () {

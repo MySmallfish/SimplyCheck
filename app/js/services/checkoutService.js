@@ -1,9 +1,11 @@
 ﻿(function (S, SL) {
 
-    SL.CheckoutService = function ($q, incidentsService, entityManager, $cacheFactory, locationsService, utils) {
+    SL.CheckoutService = function ($q, incidentsService, entityManager, $cacheFactory, locationsService, utils, checkoutQueueManager) {
         var checkoutsCache = $cacheFactory("checkouts"),
             checkoutDetailsCache = $cacheFactory("checkoutDetails", { capacity: 50 }),
             categoriesCache = $cacheFactory("categories");
+
+
 
         function getCheckoutQuery() {
             var query = breeze.EntityQuery.from("Checkout").select([
@@ -50,7 +52,6 @@
 
             if (siteId) {
                 result = result.then(function (items) {
-                    console.log("FILTERING ", items, " BY ", siteId);
                     return _.where(items, { siteId: parseInt(siteId, 10) });
                 });
             }
@@ -189,11 +190,7 @@
 
                 addCheckoutToCache(checkout);
                 checkoutDetailsCache.put(checkout.Id, checkout);
-                // SEND TO SERVER
-
-                //return getCheckoutCategories(rootCategoryId).then(function (items) {
-                //    return prepareCheckoutViewModel(items, checkout);
-                //});
+                checkoutQueueManager.push(checkout);
 
                 return checkout;
             });
@@ -237,13 +234,20 @@
 
         }
 
+        function sendUpdates() {
+            var result = checkoutQueueManager.run();
+            console.log("RR",result);
+            return result;
+        }
+
         return {
             getCheckouts: getCheckouts,
             getCheckout: getCheckout,
             clearCache: clearCache,
             getCheckoutSiteId: getCheckoutSiteId,
             getCheckoutCategories: getCheckoutCategories,
-            createNewCheckout: createNewCheckout
+            createNewCheckout: createNewCheckout,
+            sendUpdates: sendUpdates
         };
     };
 

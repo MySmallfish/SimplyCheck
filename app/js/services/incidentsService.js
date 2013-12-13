@@ -1,7 +1,8 @@
 ﻿(function (S, SL) {
 
-    SL.IncidentsService = function ($q, utils, entityManager, queueManager, zumoClient, $cacheFactory) {
-        var incidentsCache = $cacheFactory("incidents"), referenceCache = $cacheFactory("reference");
+    SL.IncidentsService = function ($q, utils, entityManager, queueManager, zumoClient, $cacheFactory, $log) {
+        var incidentsCache = $cacheFactory("incidents"),
+            referenceCache = $cacheFactory("reference");
 
         function getEventsQuery() {
             return breeze.EntityQuery.from("Event");
@@ -166,38 +167,53 @@
         
         function mapIncident(incident) {
             var mapped = _.clone(incident);
-            if (incident.Id == 0) {
-                delete incident.Id;
+            if (mapped.Id != 0) {
+                mapped.OriginalId = mapped.Id;
+                mapped.UniqueId = utils.guid.create();
+                mapped.CheckoutId = mapped.ParentEventId;
+                delete mapped.ParentEventId;
+            } else {
+                mapped.ParentEventId = parseInt(mapped.ParentEventId, 10);
             }
-            incident.CategoryId = incident.Category.Id;
-            incident.SeverityId = incident.Severity.Id;
-            if (incident.HandlingTarget) {
-                incident.HandlingTargetId = parseInt(incident.HandlingTarget.Id, 10);
+            delete mapped.Id;
+            mapped.CategoryId = mapped.Category.Id;
+            mapped.SeverityId = mapped.Severity.Id;
+            if (mapped.HandlingTarget) {
+                mapped.HandlingTargetId = parseInt(mapped.HandlingTarget.Id, 10);
             }
+            
+            
+            delete mapped.Category;
+            delete mapped.Severity;
+            delete mapped.HandlingTarget;
 
-            delete incident.Category;
-            delete incident.Severity;
-            delete incident.HandlingTarget;
-
-            return incident;
+            return mapped;
         }
 
         function sendIncident(incident) {
+            $log.info("Sending incident... ", incident);
             if (incident == null) {
                 var d = $q.defer();
                 d.reject("Incident is null");
                 return d.promise;
             }
             var incidents = zumoClient.getTable("Incidents");
+            
             incident = mapIncident(incident);
             
-            return $q.when(incidents.insert(incident));
+            return $q.when(incidents.insert(incident)).then(function (item) {
+                $log.info("Incient Sent, ", incident);
+                return item;
+            }, function (error) {
+                $log.error("Incient Failed to sent. (Incident, Error): ", incident, error);
+                return error;
+            });
 
-            var result = $q.defer();
+            //var result = $q.defer();
 
-            result.resolve(incident);
-            //result.reject("NA");
-            return result.promise;
+            //result.resolve(incident);
+            ////result.reject("NA");
+            //return result.promise;
         }
 
         var incidentsQueue = queueManager.get({
@@ -210,12 +226,7 @@
             result.resolve(incident);
             return result.promise;
         }
-
-        function runSaveQueue(incident) {
-            incidentsQueue.run();
-            return incident;
-        }
-
+        
         function pushIncidentToCache(incident) {
             
             var cachedIncidents = incidentsCache.get(incident.ParentEventId);
@@ -240,6 +251,12 @@
             
             return incident;
         }
+
+        function runSaveQueue(incident) {
+            _.defer(incidentsQueue.run);
+            return incident;
+        }
+        
         function save(incident) {
             return validate(incident)
                             .then(incidentsQueue.push)
