@@ -1,6 +1,6 @@
 ﻿(function (S, SL) {
     
-    SL.HomeController = function ($scope, checkoutService, loginManager, $location, textResource, navigate) {
+    SL.HomeController = function ($scope, checkoutService, loginManager, $location, textResource, navigate, network) {
         $scope.changeHeader(textResource.get("Checkouts"));
         $scope.orderBy = "header";
         $scope.selectedSiteId = null;
@@ -47,6 +47,7 @@
                 }
             }).finally(function () {
                 $scope.$emit("progress-completed");
+                //network.simulateOffline();
             });
         }
 

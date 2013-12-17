@@ -1,6 +1,8 @@
-﻿(function (S, SL) {
-
+﻿
+(function (S, SL) {
+    
     SL.CheckoutService = function ($q, incidentsService, entityManager, $cacheFactory, locationsService, utils, checkoutQueueManager) {
+        
         var checkoutsCache = $cacheFactory("checkouts"),
             checkoutDetailsCache = $cacheFactory("checkoutDetails", { capacity: 50 }),
             categoriesCache = $cacheFactory("categories");
@@ -161,7 +163,7 @@
         }
 
         function getCheckoutCategories(rootCategoryId) {
-            var categoriesQuery = breeze.EntityQuery.from("Category").where("RootId", "equals", rootCategoryId),
+            var categoriesQuery = breeze.EntityQuery.from("Category").select(["Id","Name","Remarks","ParentId", "RootId"]).where("RootId", "equals", rootCategoryId),
                 cachedCategories = categoriesCache.get(rootCategoryId);
 
             var categoriesPromise = cachedCategories ? $q.when(cachedCategories) : $q.when(entityManager.get().executeQuery(categoriesQuery)).then(function (cats) {
@@ -178,8 +180,8 @@
                 CategoryId: rootCategoryId,
                 StartTime: new Date(),
                 Status: 1,
-                EventCategoryName: "מבדק בטיחות"// SHOULD BE CategoryName
-                // SeverityId ? (should be default)
+                EventCategoryName: "מבדק בטיחות",// SHOULD BE CategoryName
+                SeverityId: 4
             };
             checkout.Description = checkout.EventCategoryName;
             

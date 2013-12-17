@@ -27,7 +27,11 @@
 
         function mapCheckoutBeforeSend(checkout) {
             var mapped = _.extend(checkout);
-            mapped.UniqueId = mapped.Id;
+            mapped.UniqueId = mapped.Id ? mapped.Id : mapped.UniqueId;
+            mapped.LocationId = mapped.LocationEntityId;
+            mapped.LocationType = mapped.LocationEntityType;
+            delete mapped.LocationEntityId;
+            delete mapped.LocationEntityType;
             delete mapped.Id;
             
             return mapped;

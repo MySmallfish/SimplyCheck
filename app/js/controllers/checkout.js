@@ -27,10 +27,7 @@
                 navigate.sitePermits($scope.id, $scope.checkout.Site.Id);
             }
         };
-        $scope.incidentPriorityPredicate = function (incident1, incident2) {
-            console.log("I1", incident1);
-            console.log("I2", incident2);
-        }
+
         $scope.$emit("progress-started");
         function collapseByIncidents(item) {
             var shouldExpand = false;
