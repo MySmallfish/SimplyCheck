@@ -175,7 +175,7 @@
 
                 var parentId = parseInt(mapped.ParentEventId, 10);
                 console.log("PARENTID", parentId);
-                if (isNaN(parentId)) {
+                if (typeof mapped.ParentEventId == "string" || isNaN(parentId)) {
                     mapped.CheckoutId = mapped.ParentEventId;
                     delete mapped.ParentEventId;
                 } 
