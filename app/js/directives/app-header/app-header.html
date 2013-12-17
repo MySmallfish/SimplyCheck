@@ -2,6 +2,7 @@
     <div class="logo"></div>
     <div class="header-button header-back fa fa-3x fa-arrow-right" ng-show="!pageInfo || pageInfo.back" simple-back></div>
     <div class="title" ng-class="{'short': !(!pageInfo || pageInfo.back) }">{{header}}</div>
+    <h1>NEW</h1>
     <div class="header-buttons">
         <div class="header-button fa fa-3x fa-cog" ng-show="pageInfo && !pageInfo.home" ng-click="navigatToConfiguration()"></div>
         <div class="header-button fa fa-3x fa-sign-out" ng-show="pageInfo && pageInfo.logout" ng-click="logout()"></div>
