@@ -256,16 +256,14 @@
                 return incident;
             }
 
-            function runSaveQueue(incident) {
-                _.defer(incidentsQueue.run);
-                return incident;
-            }
-        
             function save(incident) {
                 return validate(incident)
                                 .then(incidentsQueue.push)
                                 .then(pushIncidentToCache)
-                                .then(runSaveQueue);
+                                .then(function() {
+                                    incidentsQueue.run();
+                                    return $q.when(incident);
+                                });
             }
 
             return {
