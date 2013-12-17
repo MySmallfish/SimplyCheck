@@ -174,6 +174,7 @@
                 delete mapped.Id;
 
                 var parentId = parseInt(mapped.ParentEventId, 10);
+                console.log("PARENTID", parentId);
                 if (isNaN(parentId)) {
                     mapped.CheckoutId = mapped.ParentEventId;
                     delete mapped.ParentEventId;
