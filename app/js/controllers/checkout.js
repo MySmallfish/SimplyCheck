@@ -49,6 +49,8 @@
             //collapseByIncidents(checkout.Items);
 
             $scope.checkout = checkout;
+            console.time('checkout');
+
         }).finally(function () {
             $scope.$emit("progress-completed");
         });

@@ -287,8 +287,13 @@ a.button:hover {
     right: auto;
 }
 
-.checkout .button {
+.checkout .button,
+.rtl .checkout .incidents-header {
     float: right;
+}
+.rtl .checkout .button,
+.checkout .incidents-header {
+    float: left;
 }
 
 .large-button {
@@ -318,19 +323,6 @@ a.button:hover {
     background-color: #DDD;
 }
 
-/*.checkout-category.valid {
-    
-    border-right: solid 6px green;
-    margin-right: -6px;
-}
-.checkout-category.invalid {
-    border-right: solid 6px maroon;
-    margin-right: -4px;
-}*/
-
-.rtl .checkout .button {
-    float: left;
-}
 
 .incidents {
     margin-left: 20px;

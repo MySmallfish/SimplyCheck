@@ -1,12 +1,11 @@
 ﻿(function (S, SL) {
     
-    SL.HomeController = function ($scope, checkoutService, loginManager, $location, textResource, navigate, network) {
+    SL.HomeController = function ($scope, checkoutService, loginManager, $location, textResource, navigate) {
         $scope.changeHeader(textResource.get("Checkouts"));
         $scope.orderBy = "header";
         $scope.selectedSiteId = null;
         $scope.selectedSiteName = null;
 
-        
         var employeeId = 0;
         function loadCheckouts() {
             $scope.$emit("progress-started");
@@ -44,6 +43,7 @@
                     });
 
                     
+
                 }
             }).finally(function () {
                 $scope.$emit("progress-completed");

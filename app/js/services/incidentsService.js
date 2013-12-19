@@ -81,6 +81,7 @@
             }
                 
             function getCheckoutIncidentsFromServer(checkoutId) {
+               
                 var parentId = breeze.Predicate.create("ParentEventId", "==", checkoutId),
                     rowStatus = breeze.Predicate.create("RowStatus", "==", 0);
 
@@ -93,7 +94,7 @@
                         var result = {
                             Id: incident.Id,
                             UniqueId: incident.Id,
-                            ParentEventId: checkoutId,
+                            ParentEventId: parseInt(checkoutId, 10),
                             Severity: {
                                 Id: incident.Severity,
                                 Name: incident.Name
@@ -161,7 +162,7 @@
                 return $q.when(getIncidentFromCache(checkoutId, uniqueId));
             }
             function sendUpdates() {
-                return runSaveQueue();
+                return queueManager.run();
             }
         
             function mapIncident(incident) {
@@ -173,9 +174,8 @@
                 }
                 delete mapped.Id;
 
-                var parentId = parseInt(mapped.ParentEventId, 10);
-                console.log("PARENTID", parentId);
-                if (typeof mapped.ParentEventId == "string" || isNaN(parentId)) {
+                if (mapped.IsNewCheckout) {
+                    
                     mapped.CheckoutId = mapped.ParentEventId;
                     delete mapped.ParentEventId;
                 } 

@@ -73,7 +73,8 @@
             };
         }
 
-        function mapCategory(category) {
+        function mapCategory(category, index) {
+            
             return {
                 Id: category.Id,
                 ParentId: category.ParentId,
@@ -84,9 +85,9 @@
                     this.Collapsed = !this.Collapsed;
                     if (this.Collapsed) {
                         if (this.Items) {
-                            _.each(this.Items, function (item) {
+                            _.each(this.Items, function(item) {
                                 item.Collapsed = true;
-                            })
+                            });
                         }
                     } else {
                         if (this.Items && this.Items[0]) {
@@ -142,6 +143,7 @@
         function buildHierarchy(map, rootId) {
             var root = [];
             _.each(map, function (item) {
+                item.Collapsed = true;
                 if (item.ParentId != rootId) {
                     var parent = map[item.ParentId];
                     parent.Items = parent.Items || [];
@@ -150,6 +152,11 @@
                     root.push(item);
                 }
             });
+            if (root.length) {
+                
+                root[0].toggleCollapsed();
+                
+            }
             return root;
         }
         function getCheckoutSiteId(checkoutId) {
@@ -199,7 +206,7 @@
         }
 
         function getCheckout(id) {
-            //id = parseInt(id, 10);
+            //id =  ;
             var cached = checkoutDetailsCache.get(id),
                 checkoutPromise;
             if (cached) {

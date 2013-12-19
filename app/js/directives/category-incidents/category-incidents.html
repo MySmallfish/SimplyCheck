@@ -1,0 +1,16 @@
+﻿<div class="incidents" ng-init="childrenCount = child.Incidents.length">
+    <div class="incidents-items" ng-if="childrenCount">
+        
+        <ul>
+            <li ng-repeat="incident in child.Incidents |orderBy:'Severity.Name' track by incident.UniqueId">
+                <span class="severity-hint" ng-style="{ 'background-color': incident.Severity.Color }">{{ incident.Severity.Name }}</span>
+                {{ incident.Description }}
+                <div class="button edit-checkout-item" ng-click="navigateToIncident(child, incident.UniqueId);">{{"Edit"|l10n}}</div>
+            </li>
+        </ul>
+    </div>
+    <div ng-if="childrenCount" class="incidents-header">
+        {{ child.Incidents.length }} {{ "Incidents"|l10n }}
+    </div>
+    <div class="button large-button invalid" ng-click="markAsInValid(child);">{{"Invalid"|l10n}}</div>
+</div>

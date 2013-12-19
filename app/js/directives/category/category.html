@@ -1,0 +1,21 @@
+﻿<ul>
+    <li ng-repeat="category in item.Items | filter:search">
+        <h4 ng-click="category.toggleCollapsed()">
+            <i class="fa fa-plus" ng-if="category.Collapsed"></i>
+            <i class="fa fa-minus" ng-if="!category.Collapsed"></i>
+            {{category.Name}}
+        </h4>
+
+        <div class="children" ng-if="!category.Collapsed">
+            <ul>
+                <li ng-repeat="child in category.Items | filter:search"
+                    class="clearfix checkout-category">
+                    <a id="_category_{{child.Id}}">
+                        <div class="text">{{child.Text}}</div>
+                        <sl-category-incidents />
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </li>
+</ul>

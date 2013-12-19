@@ -1,8 +1,8 @@
 ﻿(function (S, SL) {
 
-    var simplyLogModule = angular.module("SimplyLog.Checkout", ["ngRoute","ngTouch", "$strap", "Simple"]);
+    var simplyLogModule = angular.module("SimplyLog.Checkout", ["ngRoute", "ngTouch", "$strap", "Simple"]);
 
-    
+
 
     simplyLogModule.service("loginManager", SL.LoginManager);
     simplyLogModule.service("incidentsService", SL.IncidentsService);
@@ -16,6 +16,23 @@
         return SL.AppHeaderDirective;
     });
 
+    simplyLogModule.directive("slCategoryIncidents", SL.CategoryIncidentsDirective);
+    simplyLogModule.directive("slCategory", SL.CategoryDirective);
+    
+    simplyLogModule.directive('postRepeatDirective',
+  ['$timeout', '$log',
+  function ($timeout, $log) {
+      return function (scope, element, attrs) {
+          if (scope.$last) {
+              $timeout(function () {
+                  console.timeEnd("checkout");
+                  //var ref = new Date(timeFinishedLoadingList);
+                  
+              });
+          }
+      };
+  }
+  ]);
     simplyLogModule.controller("LoginCtrl", SL.LoginController);
     simplyLogModule.controller("HomeCtrl", SL.HomeController);
     simplyLogModule.controller("CheckoutCtrl", SL.CheckoutController);
@@ -36,7 +53,7 @@
     simplyLogModule.config(function (configurationManagerProvider) {
         configurationManagerProvider.configure({
             "Api.Address": "http://simplylogapi.ylm.co.il/odata/",
-            "Zumo.Address": "https://simplycheck.azure-mobile.net/"            
+            "Zumo.Address": "https://simplycheck.azure-mobile.net/"
         });
     });
 
@@ -51,7 +68,7 @@
 
         $rootScope.isOnline = network.isOnline();
 
-        
+
         $rootScope.$on("Simple.NetworkStatusChanged", function () {
             $rootScope.isOnline = network.isOnline();
         });
@@ -62,7 +79,7 @@
         $rootScope.$on("progress-completed", function () {
             $rootScope.isInProgress = false;
         });
-        
+
         $rootScope.navigatToConfiguration = function () {
             navigate.configuration();
         };
@@ -80,7 +97,7 @@
                 $rootScope.$emit("progress-completed");
             });
         };
-        var anonymousAllowed = ["views/login.html","views/configuration.html"];
+        var anonymousAllowed = ["views/login.html", "views/configuration.html"];
         $rootScope.$on("$routeChangeSuccess", function (event, next, current) {
             $rootScope.changeHeader("");
             if (next && next.locals) {
@@ -150,12 +167,12 @@
             "Logout": "יציאה",
             "Configuration": "הגדרות",
             "ApiAddress": "כתובת API",
-            "MobileServicesAddress":"כתובת Mobile Services",
-            "Save":"שמור",
+            "MobileServicesAddress": "כתובת Mobile Services",
+            "Save": "שמור",
             "AuthenticationFailed": "שם המשתמש או הסיסמה שגויים או שאינך רשום",
             "PermitEffectiveDate": "תאריך",
             "SimplyCheck": "מבדק בטיחות",
-            "FilteredForSite":"מבדקים לאתר:"
+            "FilteredForSite": "מבדקים לאתר:"
         });
     });
 
