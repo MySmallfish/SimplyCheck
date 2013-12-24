@@ -314,4 +314,14 @@
     //defer.resolve(incidentDetails);
     //return defer.promise;
 
+    //var users = zumoClient.getTable("Users");
+
+    //users.insert({
+    //    userName: userName,
+    //    password: password
+    //}).then(function(userInfo) {
+    //    result.resolve(userInfo);
+    //}, function(error) {
+    //    result.reject(error);
+    //});
 })(Simple, SimplyLog);

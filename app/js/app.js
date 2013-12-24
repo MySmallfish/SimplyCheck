@@ -4,12 +4,23 @@
 
 
 
-    simplyLogModule.service("loginManager", SL.LoginManager);
+    
+    simplyLogModule.service("checkoutDataService", SL.CheckoutDataService);
+    simplyLogModule.service("incidentDataService", SL.IncidentDataService);
     simplyLogModule.service("incidentsService", SL.IncidentsService);
     simplyLogModule.service("checkoutQueueManager", SL.CheckoutQueueManager);
     simplyLogModule.service("checkoutService", SL.CheckoutService);
     simplyLogModule.service("locationsService", SL.LocationsService);
 
+    simplyLogModule.config(["azureActiveDirectoryProvider", function (azureActiveDirectory) {
+        azureActiveDirectory.configure("simplylog.onmicrosoft.com", {
+            client_id: "HgJQOHO6jgYORkDYUF5lQb5vYvXOOhs7WbG0mtF90HQ=",
+            client_secret: "369c5d3c-6b11-4a1a-97ae-1c49c2e62a64",
+            grant_type: "password",
+            resource: "https://simplylogapi.ylm.co.il",
+        }, "http://localhost:59056/api/Token");
+    }]);
+        
     simplyLogModule.provider("navigate", SL.NavigationServiceProvider);
 
     simplyLogModule.directive("appHeader", function () {
@@ -154,7 +165,6 @@
             "IncidentDescription": "מהות הפער",
             "IncidentRemarks": "פעולה מתקנת",
             "Attachments": "תמונות",
-            "Save": "שמור",
             "SaveAndNew": "שמור והוסף ממצא",
             "EffectiveDate": "תאריך:",
             "BackToCheckout": "חזרה למבדק",
@@ -177,37 +187,6 @@
     });
 
 
-    simplyLogModule.factory("entityManager", function ($rootScope, configurationManager) {
-        return {
-            get: function () {
-                if (!this.manager) {
-                    var serverAddress = configurationManager.get("Api.Address");
-                    var defaultHandler = OData.defaultHandler;
 
-                    breeze.config.initializeAdapterInstances({
-                        dataService: "OData"
-                    });
-                    var dataService = new breeze.DataService({
-                        serviceName: serverAddress
-                    })
-                    this.manager = new breeze.EntityManager(serverAddress);
-                    this.manager.fetchMetadata();
-                }
-                var self = this;
-                $rootScope.$on("Simple.ConfigurationChanged", function () {
-                    self.manager = null;
-                });
-                return this.manager;
-            }
-        };
-        //manager.metadataStore.fetchMetadata(dataService, function (data) {
-        //    console.log("MD", data);
-
-        //    console.log("Types", manager.metadataStore.getEntityTypes());
-        //});
-
-
-        return manager;
-    });
 
 })(Simple, SimplyLog);

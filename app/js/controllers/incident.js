@@ -52,8 +52,9 @@
 
 
         var severities;
-        $scope.severities = incidentsService.getSeverities().then(function (items) {
+        incidentsService.getSeverities().then(function (items) {
             severities = items;
+            $scope.severities = severities;
             setDefaultSeverity();
             return items;
         });
@@ -67,7 +68,10 @@
             }
         };
 
-        $scope.targets = incidentsService.getHandlingTargets();
+        incidentsService.getHandlingTargets().then(function(targets) {
+            $scope.targets = targets;
+        });
+        
         var incidentDetails;
         if ($scope.uniqueId) {
             incidentDetails = incidentsService.getIncidentDetails($scope.checkoutId, $scope.uniqueId);

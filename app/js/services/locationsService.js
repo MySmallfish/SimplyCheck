@@ -99,7 +99,9 @@
         }
 
         function getSite(id) {
-            return $q.when(entityManager.get().fetchEntityByKey("Site", id, true)).then(function (site) {
+            return entityManager.get().then(function (em) {
+                return $q.when(em.fetchEntityByKey("Site", id, true));
+            }).then(function (site) {
                 site = site.entity;
                 return {
                     Id: site.Id,
@@ -115,7 +117,9 @@
             if (cachedSites) {
                 return $q.when(cachedSites);
             } else {
-                return $q.when(entityManager.get().executeQuery(query)).then(function(data) {
+                return entityManager.get().then(function (em) {
+                        return $q.when(em.executeQuery(query));
+                    }).then(function(data) {
                     var sites = _.map(_.filter(data.results, function(s) {
                         return s.Name && s.Name.length;
                     }), mapSite);
