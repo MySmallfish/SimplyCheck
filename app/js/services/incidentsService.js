@@ -2,7 +2,7 @@
     SL.IncidentsService = function ($q, $cacheFactory, $log, utils, queueManager, incidentDataService) {
         var incidentsCache = $cacheFactory("incidents");
 
-        function mapCheckoutIncidents(queryResults) {
+        function mapCheckoutIncidents(checkoutId, queryResults) {
             var incidents = queryResults.results;
 
             return _.map(incidents, function (incident) {
@@ -28,7 +28,9 @@
         }
 
         function getCheckoutIncidentsFromServer(checkoutId) {
-            return incidentDataService.getCheckoutIncidents(checkoutId).then(mapCheckoutIncidents);
+            return incidentDataService.getCheckoutIncidents(checkoutId).then(function(queryResults) {
+                return mapCheckoutIncidents(checkoutId, queryResults);
+            });
         }
 
         function getCheckoutIncidents(checkoutId) {
@@ -40,18 +42,21 @@
             }
         }
 
-        function getNewIncidentDetails(checkoutId, categoryId, siteId) {
+        function getNewIncidentDetails(checkout, categoryId) {
             var incidentDetails = {
                 Id: 0,
                 UniqueId: utils.guid.create(),
                 Category: {
                     Id: categoryId
                 },
-                ParentEventId: checkoutId,
                 StartTime: new Date(),
-                LocationType: "Site",
-                LocationId: siteId
+                LocationType: checkout.LocationEntityType,
+                LocationId: checkout.LocationEntityId
             };
+            
+            if (checkout.IsNewCheckout) {
+                incidentDetails.ParentEventId = incidentDetails.ParentEventReferenceId = checkout.Id;
+            }
 
             var defer = $q.defer();
             defer.resolve(incidentDetails);
@@ -77,16 +82,14 @@
 
         function mapIncident(incident) {
             var mapped = _.clone(incident);
-
+            
             if (mapped.Id != 0) {
                 mapped.OriginalId = mapped.Id;
                 mapped.UniqueId = utils.guid.create();
             }
             delete mapped.Id;
 
-            if (mapped.IsNewCheckout) {
-
-                mapped.CheckoutId = mapped.ParentEventId;
+            if (mapped.ParentEventReferenceId === mapped.ParentEventId) {
                 delete mapped.ParentEventId;
             }
 
@@ -106,28 +109,15 @@
 
         function sendIncident(incident) {
             $log.info("Sending incident... ", incident);
-            //if (incident == null) {
-            //    var d = $q.defer();
-            //    d.reject("Incident is null");
-            //    return d.promise;
-            //}
-            //var incidents = zumoClient.getTable("Incidents");
+            if (incident == null) {
+                var d = $q.defer();
+                d.reject("Incident is null");
+                return d.promise;
+            }
 
-            //incident = mapIncident(incident);
-            //console.log("INCIDENT!!!!", incident);
-            //return $q.when(incidents.insert(incident)).then(function (item) {
-            //    $log.info("Incient Sent, ", incident);
-            //    return item;
-            //}, function (error) {
-            //    $log.error("Incient Failed to sent. (Incident, Error): ", incident, error);
-            //    return error;
-            //});
+            incident = mapIncident(incident);
 
-            //var result = $q.defer();
-
-            //result.resolve(incident);
-            ////result.reject("NA");
-            //return result.promise;
+            return incidentDataService.saveIncident(incident);
         }
 
         var incidentsQueue = queueManager.get({
@@ -142,7 +132,7 @@
         }
 
         function pushIncidentToCache(incident) {
-
+            console.log("Incident", incident);
             var cachedIncidents = incidentsCache.get(incident.ParentEventId);
             if (!cachedIncidents) {
                 cachedIncidents = [];

@@ -1,5 +1,5 @@
 ﻿(function (S, SL) {
-    SL.CheckoutQueueManager = function ($q, $log, queueManager, zumoClient) {
+    SL.CheckoutQueueManager = ["$q", "$log", "queueManager", "checkoutDataService", function ($q, $log, queueManager, checkoutDataService) {
         var checkoutsQueue = queueManager.get({
             name: "Checkouts",
             processItemAction: sendCheckout
@@ -12,10 +12,10 @@
                 d.reject("Checkout is null");
                 return d.promise;
             }
-            var checkouts = zumoClient.getTable("Checkouts");
+            
             checkout = mapCheckoutBeforeSend(checkout);
 
-            return $q.when(checkouts.insert(checkout)).then(function (item) {
+            return checkoutDataService.save(checkout).then(function (item) {
                 $log.info("Checkout Sent, ", checkout);
                 return item;
             }, function (error) {
@@ -28,8 +28,10 @@
         function mapCheckoutBeforeSend(checkout) {
             var mapped = _.extend(checkout);
             mapped.UniqueId = mapped.Id ? mapped.Id : mapped.UniqueId;
+            mapped.ReferenceId = mapped.UniqueId;
             mapped.LocationId = mapped.LocationEntityId;
             mapped.LocationType = mapped.LocationEntityType;
+            delete mapped.IsNewCheckout;
             delete mapped.LocationEntityId;
             delete mapped.LocationEntityType;
             delete mapped.Id;
@@ -50,5 +52,5 @@
             run: runCheckoutsQueue,
             push: pushCheckout
         };
-    };
+    }];
 })(Simple, SimplyLog);

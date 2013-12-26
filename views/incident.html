@@ -1,5 +1,5 @@
 ﻿<form name="Incident" novalidate>
-    <div class="main-area">
+    <div class="main-area" ng-if="loaded">
 
         <div class="row-fluid">
             <div class="span6">
@@ -66,7 +66,7 @@
         </div>
     </div>
     <div class="controls">
-        <button class="button large-button" ng-disabled="Incident.$invalid" ng-click="save()">{{ "Save"|l10n}}</button>
-        <button class="button large-button" ng-disabled="Incident.$invalid" ng-click="saveAndNew()">{{ "SaveAndNew"|l10n}}</button>
+        <button class="button large-button" ng-disabled="!loaded || Incident.$invalid" ng-click="save()">{{ "Save"|l10n}}</button>
+        <button class="button large-button" ng-disabled="!loaded || Incident.$invalid" ng-click="saveAndNew()">{{ "SaveAndNew"|l10n}}</button>
     </div>
 </form>

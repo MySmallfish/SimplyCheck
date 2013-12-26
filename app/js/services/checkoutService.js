@@ -143,15 +143,7 @@
             }
             return root;
         }
-        function getCheckoutSiteId(checkoutId) {
 
-            var cached = checkoutDetailsCache.get(checkoutId);
-
-            if (!cached) {
-                throw Error("The checkout has not been loaded.");
-            }
-            return cached.LocationEntityId;
-        }
 
         function getCheckoutCategories(rootCategoryId) {
             var cachedCategories = categoriesCache.get(rootCategoryId);
@@ -171,9 +163,10 @@
                 CategoryId: rootCategoryId,
                 StartTime: new Date(),
                 Status: 1,
-                EventCategoryName: "מבדק בטיחות",// SHOULD BE CategoryName
-                SeverityId: 4
-            };
+                EventCategoryName: "מבדק בטיחות", // SHOULD BE CategoryName
+                SeverityId: 4,
+                IsNewCheckout: true
+        };
             checkout.Description = checkout.EventCategoryName;
 
             return locationsService.getSite(siteId).then(function (site) {
@@ -189,9 +182,14 @@
             });
         }
 
+        function getCheckoutById(id) {
+            return checkoutDetailsCache.get(id);
+        }
+
         function getCheckout(id) {
             //id =  ;
-            var cached = checkoutDetailsCache.get(id),
+
+            var cached = getCheckoutById(id),
                 checkoutPromise;
             if (cached) {
                 checkoutPromise = $q.when(cached);
@@ -229,15 +227,14 @@
 
         function sendUpdates() {
             var result = checkoutQueueManager.run();
-            console.log("RR", result);
             return result;
         }
 
         return {
             getCheckouts: getCheckouts,
             getCheckout: getCheckout,
+            getCheckoutById: getCheckoutById,
             clearCache: clearCache,
-            getCheckoutSiteId: getCheckoutSiteId,
             getCheckoutCategories: getCheckoutCategories,
             createNewCheckout: createNewCheckout,
             sendUpdates: sendUpdates

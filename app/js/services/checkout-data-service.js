@@ -1,7 +1,7 @@
 ﻿(function (S, SL) {
 
     SL.CheckoutDataService = [
-        "entityManager", function(entityManager) {
+        "entityManager", "simplyLogApiClient", function (entityManager, simplyLogApiClient) {
 
             function getCheckoutQuery() {
                 var query = breeze.EntityQuery.from("Checkout").select([
@@ -30,10 +30,25 @@
                 return entityManager.getByKey("Checkout", id, true);
             }
 
+            function save(checkout) {
+                var result = simplyLogApiClient.getIncidentResource().then(function (incidentResource) {
+                    if (checkout.Id) {
+                        return incidentResource.update(checkout);
+                    } else {
+                        return incidentResource.create(checkout);
+                    }
+
+                });
+
+                return result;
+
+            }
+
             return {
                 getCheckouts: getCheckouts,
                 getCheckoutCategories: getCheckoutCategories,
-                getCheckout: getCheckout
+                getCheckout: getCheckout,
+                save: save
             };
 
         }

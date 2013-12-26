@@ -1,10 +1,11 @@
 ﻿(function (S, SL) {
 
-    var simplyLogModule = angular.module("SimplyLog.Checkout", ["ngRoute", "ngTouch", "$strap", "Simple"]);
+    var simplyLogModule = angular.module("SimplyLog.Checkout", ["ngRoute","ngResource", "ngTouch", "$strap", "Simple"]);
 
 
 
     
+    simplyLogModule.service("simplyLogApiClient", SL.ApiClient);
     simplyLogModule.service("checkoutDataService", SL.CheckoutDataService);
     simplyLogModule.service("incidentDataService", SL.IncidentDataService);
     simplyLogModule.service("incidentsService", SL.IncidentsService);
@@ -18,7 +19,7 @@
             client_secret: "369c5d3c-6b11-4a1a-97ae-1c49c2e62a64",
             grant_type: "password",
             resource: "https://simplylogapi.ylm.co.il",
-        }, "http://localhost:59056/api/Token");
+        });
     }]);
         
     simplyLogModule.provider("navigate", SL.NavigationServiceProvider);
@@ -97,8 +98,7 @@
 
 
         $rootScope.refresh = function () {
-            checkoutService.sendUpdates();
-            incidentsService.sendUpdates();
+            checkoutService.sendUpdates().then(incidentsService.sendUpdates);
 
             $rootScope.$broadcast("SimplyLog.RefreshRequired");
         };

@@ -4,7 +4,8 @@
         "$cacheFactory",
         "$q",
         "entityManager",
-        function ($cacheFactory, $q, entityManager) {
+        "simplyLogApiClient",
+        function ($cacheFactory, $q, entityManager, simplyLogApiClient) {
 
             var referenceCache = $cacheFactory("reference");
 
@@ -104,12 +105,27 @@
                 return entityManager.query(query);
             }
 
+
+            function saveIncident(incident) {
+                var result = simplyLogApiClient.getIncidentResource().then(function (incidentResource) {
+                    if (incident.Id) {
+                        return incidentResource.update(incident);
+                    } else {
+                        return incidentResource.create(incident);
+                    }
+
+                });
+
+                return result;
+            }
+
             return {
                 getCheckoutIncidents: getCheckoutIncidents,
                 getHandlingTargets: getHandlingTargets,
                 getSeverities: getSeverities,
                 getSeverity: getSeverity,
-                getHandlingTarget: getHandlingTarget
+                getHandlingTarget: getHandlingTarget,
+                saveIncident: saveIncident
             };
 
         }
