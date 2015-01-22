@@ -1,10 +1,10 @@
 ﻿(function(S, SL) {
     SL.LoginController = function ($q, $scope, loginManager, queueManager, network, networkManager, $log, textResource) {
         $scope.changeHeader(textResource.get("SimplyCheck"));
-        $scope.Username = "mysmallfish@gmail.com";
-        $scope.Password = "1234";
-        $scope.Username = "testapi@simplylog.onmicrosoft.com";
-        $scope.Password = "TA123456!";
+        //$scope.Username = "mysmallfish@gmail.com";
+        //$scope.Password = "1234";
+        $scope.Username = "bt";
+        $scope.Password = "L123456!";
 
 
         function navigate() {

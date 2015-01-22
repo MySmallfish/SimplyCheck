@@ -10,7 +10,6 @@
         });
 
         function sendPermit(permit) {
-            console.log("SENDING PERMIT: ", permit);
             var result = $q.defer();
             result.resolve(permit);
             return result.promise;

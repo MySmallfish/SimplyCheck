@@ -20,7 +20,6 @@
         }
 
         function getCheckouts(employeeId, siteId) {
-            
             var result = null;
             var cached = checkoutsCache.get("checkouts");
 

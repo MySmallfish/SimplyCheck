@@ -132,7 +132,6 @@
         }
 
         function pushIncidentToCache(incident) {
-            console.log("Incident", incident);
             var cachedIncidents = incidentsCache.get(incident.ParentEventId);
             if (!cachedIncidents) {
                 cachedIncidents = [];

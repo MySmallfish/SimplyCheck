@@ -10,7 +10,6 @@
         function loadCheckouts() {
             $scope.$emit("progress-started");
 
-
             checkoutService.getCheckouts(employeeId, $scope.selectedSiteId).then(function (items) {
                 if ($scope.selectedSiteId) {
                     $scope.items = items;
@@ -41,13 +40,9 @@
                             checkouts: sorted.length
                         };
                     });
-
-                    
-
                 }
             }).finally(function () {
                 $scope.$emit("progress-completed");
-                //network.simulateOffline();
             });
         }
 

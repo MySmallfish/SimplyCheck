@@ -24,10 +24,13 @@
     SL.NavigationService = function ($location, $window) {
 
         function configuration() {
-            $location.path("/Configuration");
+            return $location.path("/Configuration");
         }
         function back() {
             $window.history.back();
+        }
+        function home() {
+            return $location.path("/");
         }
         function newIncident(checkoutId, categoryId) {
             return incident(checkoutId, categoryId);
@@ -47,10 +50,10 @@
             return $location.path(path);
         }
         function newCheckout() {
-            $location.path("NewCheckout");
+            return $location.path("NewCheckout");
         }
         function login() {
-            $location.path("Login");
+            return $location.path("Login");
         }
         function checkout(checkoutId, categoryId) {
             var path = "Checkout/" + String(checkoutId);
@@ -68,7 +71,8 @@
             configuration: configuration,
             checkout: checkout,
             login: login,
-            newCheckout: newCheckout
+            newCheckout: newCheckout,
+            home: home
         };
 
     };

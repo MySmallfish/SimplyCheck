@@ -27,7 +27,7 @@
         
         $scope.$emit("progress-started");
         locationsService.getSitePermits($scope.siteId).then(function (permits) {
-            console.log("PERMITS", permits);
+            
             $scope.permits = permits;
         }).finally(function () {
             $scope.$emit("progress-completed");

@@ -18,7 +18,9 @@
 
             function getCheckouts() {
                 var query = getCheckoutQuery();
-                return entityManager.query(query);
+                return entityManager.query(query).then(function(items) {
+                    return items;
+                });
             }
 
             function getCheckoutCategories(rootCategoryId) {
